@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Percepción Sonora — Barrio Puerto | Grupo 2 e[ad] PUCV</title>
+  <title>Percepción Sonora — Barrio Puerto | Grupo 2 • e[ad] PUCV</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Jost (Alternativa geométrica exacta a Futura) -->
+  <!-- Google Fonts: Jost (Equivalente geométrico exacto a Futura) + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            futura: ['Futura', 'Futura PT', 'Futura Std', 'Jost', 'sans-serif'],
+            futura: ['Futura', 'Futura PT', 'Futura Std', 'Jost', 'Century Gothic', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            boardBlue: '#1B2464',
-            srcTransito: '#0095D9',
-            srcMaquinaria: '#D91E36',
-            srcPersonas: '#F2D024',
-            srcNaturaleza: '#5BB381',
+            transito: '#0095D9',     /* Azul Cian del artefacto */
+            maquinaria: '#D91E36',   /* Rojo Carmesí del artefacto */
+            personas: '#F2D024',     /* Amarillo del artefacto */
+            naturaleza: '#5BB381',   /* Verde Menta del artefacto */
+            intensidad: '#1D2A62',   /* Azul Marino de intensidad */
           }
         }
       }
@@ -38,302 +39,2713 @@
       --c-maquinaria: #D91E36;
       --c-personas: #F2D024;
       --c-naturaleza: #5BB381;
-      --c-navy: #1B2464;
+      --c-navy: #1D2A62;
     }
 
     body {
-      font-family: 'Futura', 'Futura PT', 'Futura Std', 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #060608;
-      color: #F4F4F6;
+      background-color: #FFFFFF;
+      color: #0F172A;
+      font-family: 'Futura', 'Futura PT', 'Futura Std', 'Jost', 'Century Gothic', sans-serif;
       overflow-x: hidden;
-      letter-spacing: 0.01em;
       -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em;
     }
 
-    /* Fondo fijo de círculos acústicos */
-    #fixedSoundBackground {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
+    /* Retícula arquitectónica sutil para lienzos de visualización */
+    .bg-swiss-grid {
+      background-size: 28px 28px;
+      background-image:
+        linear-gradient(to right, rgba(226, 232, 240, 0.55) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.55) 1px, transparent 1px);
     }
 
-    /* Contenedor de lectura editorial */
-    .service-container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+    .bg-dot-matrix {
+      background-image: radial-gradient(rgba(148, 163, 184, 0.45) 1px, transparent 1px);
+      background-size: 18px 18px;
     }
 
-    /* Separador sutil entre etapas del servicio/lectura */
-    .section-divider {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    /* Animaciones suaves para la portada de aparición sonora */
+    @keyframes pulseBloom {
+      0% {
+        transform: translate(-50%, -50%) scale(0.35);
+        opacity: 0;
+      }
+      30% {
+        opacity: 0.78;
+      }
+      75% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.18);
+        opacity: 0;
+      }
     }
 
-    /* Marco del Artefacto de Acrílico */
-    .artifact-frame {
-      background: #F6F7FA;
-      border: 1px solid #D8DCE6;
-      box-shadow: 0 30px 90px -20px rgba(0, 0, 0, 0.85), 0 4px 20px rgba(0, 0, 0, 0.4);
-      position: relative;
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    @keyframes subtleDrift {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -52%) scale(1.04);
+      }
     }
 
-    /* Placa de acrílico con bisel blanco */
-    .acrylic-window {
-      position: relative;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.96), rgba(241, 244, 249, 0.92)),
-        linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(232,236,244,0.88) 100%);
-      border: 12px solid #FFFFFF;
-      box-shadow:
-        inset 0 3px 12px rgba(27, 36, 100, 0.08),
-        0 6px 24px rgba(0, 0, 0, 0.08);
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Modo Proyección Pura (Solo Círculos en Fondo Oscuro) */
-    .artifact-frame.projection-only {
-      background: #09090D;
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 0 80px rgba(0, 149, 217, 0.08);
-    }
-
-    .artifact-frame.projection-only .artifact-physical-header {
-      opacity: 0.14;
-      filter: invert(1) grayscale(1);
-      pointer-events: none;
-      max-height: 0;
-      overflow: hidden;
-      padding: 0;
-      margin: 0;
-      border: none;
-    }
-
-    .artifact-frame.projection-only .acrylic-window {
-      background: radial-gradient(circle at 50% 50%, #11121A 0%, #07070B 100%);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9);
-    }
-
-    .artifact-frame.projection-only .bolt {
-      opacity: 0;
-    }
-
-    .artifact-frame.projection-only .laser-engraved-col {
-      border-right-color: rgba(255, 255, 255, 0.07);
-    }
-
-    /* Grabado láser en el acrílico */
-    .laser-engraved-col {
-      border-right: 1.5px solid rgba(27, 36, 100, 0.13);
-      position: relative;
-      transition: border-color 0.4s ease;
-    }
-    .laser-engraved-col:last-child {
-      border-right: none;
-    }
-
-    /* Pernos de fijación */
-    .bolt {
-      width: 14px;
-      height: 14px;
-      border-radius: 9999px;
-      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #d4d8e2 55%, #9aa1b2 100%);
-      border: 1.5px solid #8a92a6;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.18), inset 0 1px 2px rgba(255,255,255,0.9);
+    .hero-sound-pulse {
       position: absolute;
-      z-index: 35;
-      transition: opacity 0.3s ease;
+      border-radius: 9999px;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      animation: pulseBloom 7s cubic-bezier(0.22, 1, 0.36, 1) infinite;
     }
 
-    /* Círculos de sonido en el tablero (modo normal acrílico) */
-    .sound-token {
+    .hero-sound-node {
+      position: absolute;
+      border-radius: 9999px;
+      mix-blend-mode: multiply;
+      transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: subtleDrift 5.5s ease-in-out infinite;
+    }
+
+    /* Placas del Artefacto Físico (Planta 2D) */
+    .acrylic-header-plate {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 1.5px solid #CBD5E1;
+      box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.06);
+    }
+
+    .acrylic-main-board {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.76) 50%, rgba(255, 255, 255, 0.92) 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid rgba(203, 213, 225, 0.95);
+      box-shadow:
+        0 20px 45px -15px rgba(15, 23, 42, 0.09),
+        0 2px 10px rgba(15, 23, 42, 0.03),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+    }
+
+    /* Grabado láser leve sobre el acrílico (divide Reposo | Tránsito | Interacción) */
+    .laser-engraved-line {
+      width: 2px;
+      background: linear-gradient(
+        180deg,
+        rgba(203, 213, 225, 0.1) 0%,
+        rgba(148, 163, 184, 0.55) 12%,
+        rgba(255, 255, 255, 0.95) 50%,
+        rgba(148, 163, 184, 0.55) 88%,
+        rgba(203, 213, 225, 0.1) 100%
+      );
+      box-shadow: 1px 0 0 rgba(255, 255, 255, 0.9), -1px 0 0 rgba(148, 163, 184, 0.25);
+    }
+
+    .laser-engraved-text {
+      color: rgba(51, 65, 85, 0.85);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+      letter-spacing: 0.03em;
+    }
+
+    .acrylic-hinge {
+      width: 56px;
+      height: 12px;
+      background: linear-gradient(90deg, rgba(226,232,240,0.65), rgba(255,255,255,0.95), rgba(226,232,240,0.65));
+      border: 1px solid rgba(148, 163, 184, 0.45);
+    }
+
+    .acrylic-peg {
+      width: 16px;
+      height: 16px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 32% 32%, #ffffff 0%, #e2e8f0 68%, #94a3b8 100%);
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 1px 2px 5px rgba(15, 23, 42, 0.15);
+    }
+
+    /* Círculos de mica translúcida */
+    .mica-piece {
       position: absolute;
       transform: translate(-50%, -50%);
       border-radius: 9999px;
       mix-blend-mode: multiply;
-      opacity: 0.80;
-      transition:
-        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 0.3s ease,
-        box-shadow 0.25s ease,
-        width 0.3s ease,
-        height 0.3s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.3s ease;
       user-select: none;
+      touch-action: none;
     }
 
-    /* En modo proyección pura sobre fondo negro, usamos mezcla aditiva/luminosa */
-    .projection-only .sound-token {
-      mix-blend-mode: screen;
-      opacity: 0.86;
-      box-shadow: 0 0 28px rgba(255, 255, 255, 0.12);
+    .mica-piece:hover,
+    .mica-piece.selected-mica {
+      transform: translate(-50%, -50%) scale(1.12);
+      z-index: 90 !important;
+      box-shadow: 0 0 0 2.5px #0F172A, 0 8px 20px rgba(15, 23, 42, 0.22);
     }
 
-    .author-unlocked .sound-token {
-      cursor: grab;
+    .mica-transito {
+      background-color: rgba(0, 149, 217, 0.76);
+      border: 1.2px solid rgba(0, 118, 176, 0.45);
     }
-    .author-unlocked .sound-token:active {
-      cursor: grabbing;
+    .mica-maquinaria {
+      background-color: rgba(217, 30, 54, 0.76);
+      border: 1.2px solid rgba(175, 18, 39, 0.45);
     }
-
-    .sound-token:hover {
-      transform: translate(-50%, -50%) scale(1.08);
-      opacity: 0.96;
-      z-index: 50 !important;
-      box-shadow: 0 8px 25px rgba(27, 36, 100, 0.28);
+    .mica-personas {
+      background-color: rgba(242, 208, 36, 0.82);
+      border: 1.2px solid rgba(202, 168, 12, 0.48);
     }
-
-    .sound-token.selected-token {
-      outline: 2.5px solid #1B2464;
-      outline-offset: 3px;
-      z-index: 55 !important;
+    .mica-naturaleza {
+      background-color: rgba(91, 179, 129, 0.78);
+      border: 1.2px solid rgba(64, 145, 99, 0.48);
     }
 
-    .projection-only .sound-token.selected-token {
-      outline-color: #FFFFFF;
-    }
-
-    /* Escena 3D interactiva rotatoria */
-    .scene-3d-viewport {
+    /* Escenario 3D Libre Multi-Ángulo */
+    .orbit-stage-3d {
       perspective: 1800px;
       transform-style: preserve-3d;
-      position: relative;
-      width: 100%;
-      height: 540px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
       cursor: grab;
       user-select: none;
-      overflow: hidden;
+      touch-action: none;
     }
-    .scene-3d-viewport:active {
+    .orbit-stage-3d:active {
       cursor: grabbing;
     }
 
-    .scene-3d-rig {
+    .orbit-scene-assembly {
       position: relative;
-      width: 78%;
-      height: 76%;
+      width: 680px;
+      height: 390px;
       transform-style: preserve-3d;
       transition: transform 0.08s linear;
     }
 
-    .layer-3d-sheet {
+    .acrylic-sheet-3d {
       position: absolute;
       inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.58) 0%, rgba(241, 245, 249, 0.36) 50%, rgba(255, 255, 255, 0.65) 100%);
+      border: 2px solid rgba(148, 163, 184, 0.65);
+      box-shadow:
+        0 18px 38px rgba(15, 23, 42, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
       transform-style: preserve-3d;
-      background: rgba(255, 255, 255, 0.12);
-      border: 2px solid rgba(255, 255, 255, 0.45);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(2px);
-      border-radius: 4px;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease, border-color 0.35s ease;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
     }
 
-    .projection-only .layer-3d-sheet {
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px dashed rgba(255, 255, 255, 0.16);
-      box-shadow: none;
-      backdrop-filter: none;
+    /* Proyección Total (Síntesis Pura de Círculos) */
+    .pure-circle-node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 9999px;
+      mix-blend-mode: multiply;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+    }
+    .pure-circle-node:hover {
+      transform: translate(-50%, -50%) scale(1.14);
+      z-index: 80 !important;
+      box-shadow: 0 0 0 2px #0F172A;
     }
 
-    /* Botones de navegación de píldora */
-    .pill-btn {
-      transition: all 0.2s ease;
-    }
-    .pill-btn.active {
-      background-color: #FFFFFF;
-      color: #060608;
-      border-color: #FFFFFF;
-    }
-
-    /* Scrollbar sutil */
+    /* Scrollbars limpios */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #060608;
+      background: #F8FAFC;
     }
     ::-webkit-scrollbar-thumb {
-      background: #27272A;
-      border-radius: 3px;
+      background: #CBD5E1;
+      border-radius: 9999px;
     }
   </style>
 </head>
-<body class="selection:bg-white selection:text-black">
+<body class="bg-white font-futura text-slate-900 selection:bg-sky-500/15 selection:text-sky-950">
 
-  <!-- FONDO FIJO DE APARICIÓN ACÚSTICA -->
-  <canvas id="fixedSoundBackground"></canvas>
+  <!-- =====================================================================
+       BARRA SUPERIOR EDITORIAL Y CONTROL DE ACCESO (MODO LECTURA / AUTOR)
+       ===================================================================== -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
+      <a href="#inicio" class="flex items-center gap-3 group">
+        <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px] tracking-widest">
+          G2
+        </div>
+        <div class="leading-tight">
+          <span class="block text-[9px] font-mono uppercase tracking-[0.22em] text-slate-400">
+            e[ad] PUCV • Taller Diseño de Servicios 2026
+          </span>
+          <span class="block text-xs sm:text-sm font-bold tracking-wide text-slate-900 uppercase">
+            Percepción Sonora — Barrio Puerto
+          </span>
+        </div>
+      </a>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <div class="relative z-10">
+      <nav class="hidden lg:flex items-center gap-7 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500">
+        <a href="#inicio" class="hover:text-slate-900 transition">00 • Síntesis</a>
+        <a href="#arquitectura" class="hover:text-slate-900 transition">01 • Metodología</a>
+        <a href="#laboratorio" class="hover:text-slate-900 transition">02 • Artefacto 2D / 3D / Proyección</a>
+        <a href="#hallazgos" class="hover:text-slate-900 transition">03 • Analítica</a>
+        <a href="#datos" class="hover:text-slate-900 transition">04 • Matriz de Datos</a>
+      </nav>
 
-    <!-- BARRA DE NAVEGACIÓN COMPACTA -->
-    <header class="sticky top-0 z-50 bg-[#060608]/85 backdrop-blur-md border-b border-white/10">
-      <div class="service-container h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <a href="#inicio" class="text-xs font-bold tracking-[0.22em] uppercase text-white">Percepción Sonora</a>
-          <span class="text-zinc-700">·</span>
-          <span class="text-xs text-zinc-400 hidden sm:inline">Barrio Puerto · Grupo 2 e[ad] PUCV</span>
+      <div class="flex items-center gap-2.5">
+        <!-- Botón de Estado: Modo Lectura vs Modo Autor (Solo tú puedes editar) -->
+        <button id="authorModeToggleBtn" onclick="handleAuthorModeButtonClick()" class="px-3.5 py-1.5 rounded-full border border-slate-200 hover:border-slate-900 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition">
+          <i id="authorLockIcon" class="ph-bold ph-lock-key text-xs"></i>
+          <span id="authorModeText">Modo Lectura</span>
+        </button>
+
+        <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold uppercase tracking-[0.12em] transition">
+          <span>Wiki Casiopea</span>
+          <i class="ph-bold ph-arrow-up-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <!-- =====================================================================
+         00 • INTRO & HERO DE DISEÑO DE SERVICIOS (PROPORCIÓN ÁUREA, SIN VACÍOS)
+         ===================================================================== -->
+    <section id="inicio" class="py-10 lg:py-14 border-b border-slate-200/80">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+
+        <!-- Columna Izquierda (7 cols): Encuadre Conceptual + KPIs + Acciones Directas -->
+        <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[10px] font-mono font-semibold uppercase tracking-[0.18em] text-slate-600">
+              <span class="w-2 h-2 rounded-full bg-[#0095D9]"></span>
+              <span class="w-2 h-2 rounded-full bg-[#D91E36]"></span>
+              <span class="w-2 h-2 rounded-full bg-[#F2D024]"></span>
+              <span class="w-2 h-2 rounded-full bg-[#5BB381]"></span>
+              <span>Investigación Empírica • Valparaíso</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-slate-900 leading-[1.06]">
+              Cartografía tangible de la escucha ciudadana en el Barrio Puerto.
+            </h1>
+
+            <p class="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl">
+              ¿Cómo condiciona el paisaje sonoro nuestro bienestar y deseo de habitar el espacio público? Mediante un <strong>artefacto físico de capas de acrílico</strong>, levantamos la percepción acústica en <strong>Muelle Prat, Plaza Sotomayor y Plaza Echaurren</strong> durante la <strong>Mañana, Mediodía y Tarde</strong>, traduciendo cada sonido en color, diámetro y coordenadas de <strong>Agradabilidad (Eje Y)</strong> y <strong>Permanencia (Eje X)</strong>.
+            </p>
+          </div>
+
+          <!-- Cinta de Indicadores Clave del Levantamiento (4 KPIs compactos) -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Territorio</span>
+              <span class="text-xl font-extrabold text-slate-900 mt-0.5 block">3 Lugares</span>
+              <span class="text-[11px] text-slate-500">Muelle y 2 Plazas</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Temporalidad</span>
+              <span class="text-xl font-extrabold text-slate-900 mt-0.5 block">3 Capas</span>
+              <span class="text-[11px] text-slate-500">Mañana • Mediodía • Tarde</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Situación en Sitio</span>
+              <span class="text-xl font-extrabold text-slate-900 mt-0.5 block">3 Columnas</span>
+              <span class="text-[11px] text-slate-500">Reposo • Tránsito • Interacción</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Muestra Activa</span>
+              <span id="heroTotalCount" class="text-xl font-extrabold text-slate-900 mt-0.5 block">24 Registros</span>
+              <span class="text-[11px] text-slate-500">4 Fuentes × 3 Intensidades</span>
+            </div>
+          </div>
+
+          <!-- Botones de navegación rápida hacia los 3 modos de vista -->
+          <div class="flex flex-wrap items-center gap-2.5 pt-1">
+            <a href="#laboratorio" onclick="switchLabMode('2d')" class="px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-[0.14em] transition inline-flex items-center gap-2">
+              <i class="ph-bold ph-bounding-box"></i>
+              <span>Explorar Artefacto</span>
+            </a>
+            <a href="#laboratorio" onclick="switchLabMode('3d')" class="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5">
+              <i class="ph-bold ph-cube"></i>
+              <span>Rotación 3D Libre</span>
+            </a>
+            <a href="#laboratorio" onclick="switchLabMode('projection')" class="px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5">
+              <i class="ph-bold ph-circles-three-plus"></i>
+              <span>Proyección Pura de Círculos</span>
+            </a>
+          </div>
         </div>
 
-        <nav class="hidden lg:flex items-center gap-7 text-[11px] font-medium tracking-[0.16em] uppercase text-zinc-400">
-          <a href="#contexto" class="hover:text-white transition">01. Metodología</a>
-          <a href="#artefacto" class="hover:text-white transition">02. Artefacto y 3D</a>
-          <a href="#proyeccion-total" class="hover:text-white transition">03. Proyección Pura</a>
-          <a href="#analisis" class="hover:text-white transition">04. Gráficos</a>
-          <a href="#base-datos" class="hover:text-white transition">05. Base de Datos</a>
-        </nav>
+        <!-- Columna Derecha (5 cols): Animación de Aparición Sonora + Codificación Rápida -->
+        <div class="lg:col-span-5 flex flex-col">
+          <div class="relative flex-1 min-h-[300px] rounded-3xl bg-slate-50/80 border border-slate-200/90 overflow-hidden flex flex-col justify-between p-5 bg-dot-matrix">
+            
+            <!-- Encabezado superior del lienzo generativo -->
+            <div class="relative z-20 flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-600">
+                Simulación Acústica • Superposición Translúcida
+              </span>
+              <span class="text-[10px] font-mono text-slate-400">mix-blend: multiply</span>
+            </div>
 
-        <div class="flex items-center gap-3">
-          <button id="authorLockBtn" onclick="toggleAuthorLockModal()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 text-[11px] font-medium tracking-wider uppercase text-zinc-300 hover:border-white transition bg-white/5">
-            <span id="lockIcon">🔒</span>
-            <span id="lockStatusText">Modo Lectura</span>
+            <!-- Anillos concéntricos sutiles y contenedor de círculos emergentes -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-[78%] aspect-square rounded-full border border-slate-200/70"></div>
+              <div class="w-[52%] aspect-square rounded-full border border-slate-200/70"></div>
+              <div class="w-[26%] aspect-square rounded-full border border-slate-200/70"></div>
+            </div>
+            <div id="heroSoundCanvas" class="absolute inset-0"></div>
+
+            <!-- Pie del lienzo: Las 4 Fuentes Emisoras y las 3 Intensidades -->
+            <div class="relative z-20 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+              <div class="flex flex-wrap items-center gap-3 font-bold text-slate-800">
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0095D9]"></span>Tránsito</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D91E36]"></span>Maquinaria</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F2D024]"></span>Personas</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#5BB381]"></span>Naturaleza</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 border-l border-slate-200 pl-2.5">
+                <span class="w-3 h-3 rounded-full bg-[#1D2A62] inline-block" title="Alta"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1D2A62]/75 inline-block" title="Media"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-[#1D2A62]/50 inline-block" title="Baja"></span>
+                <span>Ø Intensidad</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         01 • ARQUITECTURA METODOLÓGICA (BLUEPRINT DE DISEÑO DE SERVICIOS EN 3 COLUMNAS)
+         ===================================================================== -->
+    <section id="arquitectura" class="py-12 lg:py-16 border-b border-slate-200/80 space-y-8">
+      
+      <!-- Encabezado compacto en fila -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-slate-400 block">
+            01 • Diseño del Instrumento y Protocolo de Campo
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 mt-1">
+            ¿Dónde, cuándo y cómo medimos la percepción sonora?
+          </h2>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-500 max-w-md leading-relaxed">
+          Estructura tridimensional del levantamiento: cada ficha posicionada por la persona encuestada captura simultáneamente lugar, bloque horario, situación espacial y valoración acústica.
+        </p>
+      </div>
+
+      <!-- Matriz de 3 Columnas Iguales (H-FULL) sin espacios vacíos -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+
+        <!-- COLUMNA A: DÓNDE MEDIMOS (3 LUGARES DEL BARRIO PUERTO) -->
+        <div class="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Dimensión 01 • Territorio</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-700">3 Nodos Urbanos</span>
+            </div>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">
+              A. Tres Lugares en Barrio Puerto
+            </h3>
+            <div class="space-y-2.5">
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-start gap-3">
+                <span class="w-7 h-7 rounded-xl bg-[#5BB381]/15 text-[#5BB381] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">01</span>
+                <div>
+                  <h4 class="text-xs font-bold uppercase text-slate-900">Muelle Prat</h4>
+                  <p class="text-[11px] text-slate-500 leading-snug mt-0.5">Borde costero abierto: oleaje, gaviotas, pregones de lanchas y maniobras de remolcadores.</p>
+                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-start gap-3">
+                <span class="w-7 h-7 rounded-xl bg-[#0095D9]/15 text-[#0095D9] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">02</span>
+                <div>
+                  <h4 class="text-xs font-bold uppercase text-slate-900">Plaza Sotomayor</h4>
+                  <p class="text-[11px] text-slate-500 leading-snug mt-0.5">Explanada cívica e intermodal: corredor de microbuses y trolebuses frente a centro peatonal.</p>
+                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-start gap-3">
+                <span class="w-7 h-7 rounded-xl bg-[#F2D024]/25 text-amber-800 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">03</span>
+                <div>
+                  <h4 class="text-xs font-bold uppercase text-slate-900">Plaza Echaurren</h4>
+                  <p class="text-[11px] text-slate-500 leading-snug mt-0.5">Núcleo histórico barrial: conversación en escaños, comercio local y reverberación en adoquines.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500">
+            <span>Recorrido peatonal continuo</span>
+            <span class="font-mono font-semibold text-slate-800">Barrio Puerto, Valparaíso</span>
+          </div>
+        </div>
+
+        <!-- COLUMNA B: CUÁNDO MEDIMOS (LAS 3 CAPAS HORARIAS DE ACRÍLICO) -->
+        <div class="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Dimensión 02 • Capas Físicas</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-700">3 Placas de Acrílico</span>
+            </div>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">
+              B. Tres Capas Horarias Superpuestas
+            </h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Las placas transparentes del objeto corresponden a <strong>tres momentos del día</strong>, permitiendo comparar la evolución temporal sin perder la lectura conjunta:
+            </p>
+            <div class="space-y-2.5">
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-8 rounded-full bg-amber-400"></span>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-900">Capa 1 • Mañana</h4>
+                    <p class="text-[11px] text-slate-500">Apertura comercial, descarga y brisa clara.</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-semibold text-slate-400">09:00–12:00</span>
+              </div>
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-8 rounded-full bg-sky-500"></span>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-900">Capa 2 • Mediodía</h4>
+                    <p class="text-[11px] text-slate-500">Máxima afluencia social, ferias y pregones.</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-semibold text-slate-400">12:00–15:00</span>
+              </div>
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-2.5 h-8 rounded-full bg-indigo-900"></span>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase text-slate-900">Capa 3 • Tarde</h4>
+                    <p class="text-[11px] text-slate-500">Hora punta de retorno y viento costero.</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-semibold text-slate-400">15:00–18:30</span>
+              </div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500">
+            <span>Superposición óptica en el objeto</span>
+            <span class="font-mono font-semibold text-slate-800">Desplegable en 3D</span>
+          </div>
+        </div>
+
+        <!-- COLUMNA C: CÓMO MEDIMOS (EJES DE AGRADABILIDAD, PERMANENCIA Y GRABADO LÁSER) -->
+        <div class="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Dimensión 03 • Lectura del Tablero</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-700">Ejes + Grabado</span>
+            </div>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">
+              C. Ejes de Percepción y Columnas Grabadas
+            </h3>
+
+            <div class="space-y-2.5">
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-900">
+                  <span>Eje Vertical (Y) • Agradabilidad</span>
+                  <span>😊 Agrada ↔ ☹️ Molestia</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1 leading-snug">
+                  Registra si el sonido resulta agradable o genera incomodidad acústica en la persona entrevistada.
+                </p>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-900">
+                  <span>Eje Horizontal (X) • Permanencia</span>
+                  <span>← Irse | Quedarse →</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1 leading-snug">
+                  Indica si la atmósfera sonora invita a permanecer en el lugar o expulsa al habitante.
+                </p>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white border border-slate-200/80">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-900">
+                  <span>Grabado Inferior • Estado en el Lugar</span>
+                  <span class="font-mono text-[10px] text-slate-500">3 Columnas</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 mt-2 text-center text-[10px] font-bold uppercase text-slate-700">
+                  <span class="py-1 rounded-lg bg-slate-100">Reposo</span>
+                  <span class="py-1 rounded-lg bg-slate-100">Tránsito</span>
+                  <span class="py-1 rounded-lg bg-slate-100">Interacción</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500">
+            <span>Diámetro = Intensidad percibida</span>
+            <span class="font-mono font-semibold text-slate-800">Alta • Media • Baja</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         02 • LABORATORIO INTERACTIVO DEL ARTEFACTO (3 VISTAS: 2D / 3D LIBRE / PROYECCIÓN PURA)
+         ===================================================================== -->
+    <section id="laboratorio" class="py-12 lg:py-16 border-b border-slate-200/80 space-y-6">
+
+      <!-- Cabecera + Selector de los 3 Modos de Visualización -->
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-slate-400 block">
+            02 • Exploración Multidimensional del Objeto y los Datos
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-slate-900 mt-1">
+            Laboratorio del Artefacto de Percepción Sonora
+          </h2>
+        </div>
+
+        <!-- Tabs Principales de Modo de Visualización (Planta 2D | Órbita 3D Multi-Ángulo | Proyección Total de Círculos) -->
+        <div class="inline-flex p-1.5 rounded-2xl bg-slate-100 border border-slate-200/90 self-start lg:self-end">
+          <button id="tabMode2D" onclick="switchLabMode('2d')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900 text-white shadow-sm flex items-center gap-2 transition">
+            <i class="ph-bold ph-bounding-box"></i>
+            <span>1. Artefacto 2D</span>
+          </button>
+          <button id="tabMode3D" onclick="switchLabMode('3d')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 flex items-center gap-2 transition">
+            <i class="ph-bold ph-cube-focus"></i>
+            <span>2. Rotación 3D Libre</span>
+          </button>
+          <button id="tabModeProjection" onclick="switchLabMode('projection')" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 flex items-center gap-2 transition">
+            <i class="ph-bold ph-circles-three-plus"></i>
+            <span>3. Proyección Total</span>
           </button>
         </div>
       </div>
-    </header>
 
-    <!-- =================================================================== -->
-    <!-- 00. PORTADA EDITORIAL Y SÍNTESIS DEL PROYECTO (ESPACIO OPTIMIZADO) -->
-    <!-- =================================================================== -->
-    <section id="inicio" class="relative pt-14 pb-20 md:pt-20 md:pb-24">
-      <div class="service-container">
+      <!-- BARRA UNIFICADA DE FILTROS (LUGAR + CAPA HORARIA + FUENTES EMISORAS) -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-slate-50 border border-slate-200/90 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
         
-        <!-- Etiqueta de Taller -->
-        <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-white/15 bg-white/[0.03] mb-8">
-          <span class="w-2 h-2 rounded-full bg-srcTransito animate-pulse"></span>
-          <span class="text-[10px] tracking-[0.22em] uppercase text-zinc-300 font-semibold">Taller de Diseño de Servicios 2026 · e[ad] PUCV</span>
+        <!-- Filtro 1: Lugar del Barrio Puerto -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-2">Lugar:</span>
+          <button onclick="setPlaceFilter('ALL')" data-place="ALL" class="place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white transition">
+            Todos (3)
+          </button>
+          <button onclick="setPlaceFilter('muelle_prat')" data-place="muelle_prat" class="place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Muelle Prat
+          </button>
+          <button onclick="setPlaceFilter('plaza_sotomayor')" data-place="plaza_sotomayor" class="place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Plaza Sotomayor
+          </button>
+          <button onclick="setPlaceFilter('plaza_echaurren')" data-place="plaza_echaurren" class="place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Plaza Echaurren
+          </button>
         </div>
 
-        <!-- Grilla Principal de Portada -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
-          <div class="lg:col-span-8">
-            <h1 class="text-4xl sm:text-6xl lg:text-[4.25rem] font-bold tracking-tight text-white leading-[1.03]">
-              Cartografía tangible del paisaje sonoro en el Barrio Puerto.
-            </h1>
+        <!-- Filtro 2: Capa Horaria de Acrílico -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-2">Capa Horaria:</span>
+          <button onclick="setTimeLayerFilter('ALL')" data-time="ALL" class="time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white transition">
+            3 Capas
+          </button>
+          <button onclick="setTimeLayerFilter('manana')" data-time="manana" class="time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Mañana
+          </button>
+          <button onclick="setTimeLayerFilter('mediodia')" data-time="mediodia" class="time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Mediodía
+          </button>
+          <button onclick="setTimeLayerFilter('tarde')" data-time="tarde" class="time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition">
+            Tarde
+          </button>
+        </div>
+
+        <!-- Filtro 3: Fuentes Sonoras (Activar / Aislar) -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-1">Fuente:</span>
+          <button onclick="setSourceFilter('ALL')" data-srcfilter="ALL" class="srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-slate-900 text-white transition">
+            Todas
+          </button>
+          <button onclick="setSourceFilter('transito')" data-srcfilter="transito" class="srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 flex items-center gap-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-[#0095D9]"></span>Tránsito
+          </button>
+          <button onclick="setSourceFilter('maquinaria')" data-srcfilter="maquinaria" class="srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 flex items-center gap-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-[#D91E36]"></span>Maquinaria
+          </button>
+          <button onclick="setSourceFilter('personas')" data-srcfilter="personas" class="srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 flex items-center gap-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-[#F2D024]"></span>Personas
+          </button>
+          <button onclick="setSourceFilter('naturaleza')" data-srcfilter="naturaleza" class="srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 flex items-center gap-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-[#5BB381]"></span>Naturaleza
+          </button>
+        </div>
+
+      </div>
+
+      <!-- =================================================================
+           GRILLA PRINCIPAL DEL LABORATORIO (9 COLS ESCENARIO | 3 COLS INSPECTOR COMPACTO)
+           ================================================================= -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- COLUMNA IZQUIERDA (9 COLS): ESCENARIO DINÁMICO SEGÚN MODO ACTIVO -->
+        <div class="lg:col-span-9 flex flex-col justify-between">
+
+          <!-- =============================================================
+               MODO 1: ARTEFACTO FÍSICO (PLANTA 2D FIEL A LA FOTO)
+               ============================================================= -->
+          <div id="viewContainer2D" class="space-y-0">
+
+            <!-- CABEZAL SUPERIOR DEL OBJETO -->
+            <div class="acrylic-header-plate rounded-2xl p-5 sm:p-6 mx-auto relative z-20">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+
+                <!-- Bloque Izquierdo: PERCEPCIÓN SONORA + Instrucciones -->
+                <div class="lg:col-span-4 space-y-1.5 border-b lg:border-b-0 lg:border-r border-slate-200/80 pb-3 lg:pb-0 lg:pr-4">
+                  <h3 class="text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-slate-900 leading-none">
+                    PERCEPCIÓN<br/>SONORA
+                  </h3>
+                  <p class="text-[11px] font-semibold text-slate-800 pt-0.5">
+                    Detente un momento y escucha tu entorno:
+                  </p>
+                  <ul class="text-[10.5px] text-slate-600 space-y-0.5 leading-snug">
+                    <li>• Identifica dos sonidos o más</li>
+                    <li>• Elige el color según la fuente emisora del sonido</li>
+                    <li>• Asigna el tamaño de la pieza según su intensidad</li>
+                    <li>• Toma las piezas necesarias y ubícalas en el tablero</li>
+                  </ul>
+                </div>
+
+                <!-- Bloque Central: ¿Cuál es el origen o la fuente emisora del sonido? -->
+                <div class="lg:col-span-5 space-y-2.5 text-center">
+                  <h4 class="text-xs font-bold text-slate-900">
+                    ¿Cuál es el origen o la fuente emisora del sonido?
+                  </h4>
+                  <div class="grid grid-cols-4 gap-2">
+                    <button type="button" onclick="selectActiveSource('transito')" id="headerSource-transito" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                      <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0095D9] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                        <i class="ph-fill ph-car text-xl"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800 leading-tight">Tránsito</span>
+                    </button>
+
+                    <button type="button" onclick="selectActiveSource('maquinaria')" id="headerSource-maquinaria" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                      <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#D91E36] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                        <i class="ph-bold ph-anchor text-xl"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800 leading-tight">Maquinaria<br/>Portuaria</span>
+                    </button>
+
+                    <button type="button" onclick="selectActiveSource('personas')" id="headerSource-personas" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                      <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#F2D024] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                        <i class="ph-bold ph-user-sound text-xl"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800 leading-tight">Personas</span>
+                    </button>
+
+                    <button type="button" onclick="selectActiveSource('naturaleza')" id="headerSource-naturaleza" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                      <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#5BB381] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                        <i class="ph-fill ph-bird text-xl"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800 leading-tight">Naturaleza</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Bloque Derecho: ¿Con qué intensidad se manifestó el sonido? -->
+                <div class="lg:col-span-3 space-y-2.5 text-center border-t lg:border-t-0 lg:border-l border-slate-200/80 pt-3 lg:pt-0 lg:pl-3">
+                  <h4 class="text-xs font-bold text-slate-900">
+                    ¿Con qué intensidad se manifestó el sonido?
+                  </h4>
+                  <div class="flex items-end justify-center gap-3.5">
+                    <button type="button" onclick="selectActiveIntensity('alta')" id="headerInt-alta" class="group flex flex-col items-center gap-1">
+                      <div class="w-12 h-12 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                        <i class="ph-fill ph-speaker-high text-xl"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800">Alta</span>
+                    </button>
+
+                    <button type="button" onclick="selectActiveIntensity('media')" id="headerInt-media" class="group flex flex-col items-center gap-1">
+                      <div class="w-9 h-9 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-80">
+                        <i class="ph-fill ph-speaker-low text-base"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800">Media</span>
+                    </button>
+
+                    <button type="button" onclick="selectActiveIntensity('baja')" id="headerInt-baja" class="group flex flex-col items-center gap-1">
+                      <div class="w-7 h-7 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-70">
+                        <i class="ph-fill ph-speaker-none text-xs"></i>
+                      </div>
+                      <span class="text-[10px] font-bold text-slate-800">Baja</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 3 Conectores de acrílico -->
+            <div class="max-w-3xl mx-auto px-14 flex justify-between items-center -my-1 relative z-10 pointer-events-none">
+              <div class="acrylic-hinge rounded-sm"></div>
+              <div class="acrylic-hinge rounded-sm"></div>
+              <div class="acrylic-hinge rounded-sm"></div>
+            </div>
+
+            <!-- PLACA PRINCIPAL DE ACRÍLICO EN 2D -->
+            <div id="acrylicBoard" onclick="handleBoardSurfaceClick(event)" class="acrylic-main-board rounded-2xl w-full aspect-[16/9] min-h-[380px] sm:min-h-[450px] select-none overflow-hidden">
+
+              <!-- 4 Pernos cilíndricos blancos en las esquinas -->
+              <div class="acrylic-peg absolute top-3.5 left-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute top-3.5 right-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-3.5 left-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-3.5 right-3.5 z-40 pointer-events-none"></div>
+
+              <!-- EJE X SUPERIOR: PERMANENCIA -->
+              <div class="absolute top-3 left-14 right-14 z-30 pointer-events-none flex flex-col items-center">
+                <div class="flex items-center gap-4 w-full max-w-md justify-between text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">
+                  <span>← Invita a irse</span>
+                  <span class="text-xs sm:text-sm font-bold text-slate-800 tracking-normal capitalize">Permanencia</span>
+                  <span>Invita a quedarse →</span>
+                </div>
+                <div class="w-full max-w-md h-[1px] bg-gradient-to-r from-transparent via-slate-300 to-transparent mt-0.5"></div>
+              </div>
+
+              <!-- EJE Y IZQUIERDO: AGRADABILIDAD -->
+              <div class="absolute left-4 sm:left-6 top-11 bottom-11 w-9 z-30 flex flex-col items-center justify-between pointer-events-none">
+                <div class="flex flex-col items-center gap-0.5">
+                  <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-sm">
+                    <i class="ph-fill ph-smiley text-lg"></i>
+                  </div>
+                  <span class="text-[8.5px] font-bold uppercase tracking-wider text-slate-500">Agrada</span>
+                </div>
+
+                <div class="flex-1 flex items-center justify-center relative my-1">
+                  <div class="w-[1px] h-full bg-gradient-to-b from-slate-300 via-slate-200 to-slate-300"></div>
+                  <span class="-rotate-90 whitespace-nowrap text-[9.5px] font-bold uppercase tracking-[0.2em] text-slate-400 bg-white/85 px-1.5">
+                    Agradabilidad
+                  </span>
+                </div>
+
+                <div class="flex flex-col items-center gap-0.5">
+                  <span class="text-[8.5px] font-bold uppercase tracking-wider text-slate-500">Molestia</span>
+                  <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-sm">
+                    <i class="ph-fill ph-smiley-sad text-lg"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- GRABADO LÁSER EN EL ACRÍLICO: 3 COLUMNAS INFERIORES (REPOSO | TRÁNSITO | INTERACCIÓN) -->
+              <div class="absolute inset-0 grid grid-cols-3 pointer-events-none z-10">
+                <div class="relative flex flex-col justify-end items-center pb-3.5">
+                  <div class="text-center">
+                    <span class="block text-[8.5px] uppercase tracking-[0.18em] text-slate-400 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-xs sm:text-sm font-bold">Reposo</span>
+                  </div>
+                  <div class="laser-engraved-line absolute right-0 top-12 bottom-5"></div>
+                </div>
+
+                <div class="relative flex flex-col justify-end items-center pb-3.5">
+                  <div class="text-center">
+                    <span class="block text-[8.5px] uppercase tracking-[0.18em] text-slate-400 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-xs sm:text-sm font-bold">Tránsito</span>
+                  </div>
+                  <div class="laser-engraved-line absolute right-0 top-12 bottom-5"></div>
+                </div>
+
+                <div class="relative flex flex-col justify-end items-center pb-3.5">
+                  <div class="text-center">
+                    <span class="block text-[8.5px] uppercase tracking-[0.18em] text-slate-400 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-xs sm:text-sm font-bold">Interacción</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contenedores de las 3 Capas Horarias en Planta 2D -->
+              <div id="layer2d-manana" class="absolute inset-0 z-20 pointer-events-none"></div>
+              <div id="layer2d-mediodia" class="absolute inset-0 z-20 pointer-events-none"></div>
+              <div id="layer2d-tarde" class="absolute inset-0 z-20 pointer-events-none"></div>
+
+            </div>
+
+            <!-- Soportes inferiores de acrílico -->
+            <div class="max-w-3xl mx-auto px-14 flex justify-between items-center -mt-1 relative z-10 pointer-events-none">
+              <div class="acrylic-hinge rounded-sm h-3"></div>
+              <div class="acrylic-hinge rounded-sm h-3"></div>
+              <div class="acrylic-hinge rounded-sm h-3"></div>
+            </div>
           </div>
-          <div class="lg:col-span-4">
-            <p class="text-base sm:text-lg text-zinc-300 font-light leading-relaxed">
-              Levantamiento de percepción acústica mediante un artefacto de placas de acrílico superpuestas. Evaluamos cómo las fuentes sonoras condicionan la <strong class="text-white font-medium">agradabilidad</strong> y el deseo de <strong class="text-white font-medium">permanencia</strong> en el espacio público.
-            </p>
+
+          <!-- =============================================================
+               MODO 2: EXPLORACIÓN 3D LIBRE MULTI-ÁNGULO (ROTACIÓN 360° + SEPARACIÓN DE CAPAS)
+               ============================================================= -->
+          <div id="viewContainer3D" class="hidden flex-col justify-between space-y-4 h-full">
+            
+            <!-- Barra de Controles de Cámara 3D y Sliders de Ángulo/Separación -->
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-1">Vistas Rápidas:</span>
+                <button onclick="set3DCameraPreset(54, -28, 52, 0.92)" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-900 hover:text-white border border-slate-200 text-[11px] font-bold transition">
+                  Isométrica
+                </button>
+                <button onclick="set3DCameraPreset(76, 0, 68, 0.92)" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-900 hover:text-white border border-slate-200 text-[11px] font-bold transition">
+                  Perfil de Capas
+                </button>
+                <button onclick="set3DCameraPreset(12, 0, 24, 0.95)" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-900 hover:text-white border border-slate-200 text-[11px] font-bold transition">
+                  Planta Cenital
+                </button>
+                <button onclick="set3DCameraPreset(48, 35, 56, 0.92)" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-900 hover:text-white border border-slate-200 text-[11px] font-bold transition">
+                  Oblicua Derecha
+                </button>
+              </div>
+
+              <!-- Controles deslizantes de precisión 3D -->
+              <div class="flex flex-wrap items-center gap-4 text-[11px]">
+                <label class="flex items-center gap-2 font-semibold text-slate-700">
+                  <span>Giro Z: <strong id="lblRotZ" class="font-mono">-28°</strong></span>
+                  <input id="sliderRotZ" type="range" min="-180" max="180" value="-28" oninput="update3DFromSliders()" class="w-20 accent-slate-900" />
+                </label>
+                <label class="flex items-center gap-2 font-semibold text-slate-700">
+                  <span>Inclinación X: <strong id="lblRotX" class="font-mono">54°</strong></span>
+                  <input id="sliderRotX" type="range" min="0" max="82" value="54" oninput="update3DFromSliders()" class="w-20 accent-slate-900" />
+                </label>
+                <label class="flex items-center gap-2 font-semibold text-slate-700">
+                  <span>Espaciado Capas: <strong id="lblGapZ" class="font-mono">52px</strong></span>
+                  <input id="sliderGapZ" type="range" min="14" max="95" value="52" oninput="update3DFromSliders()" class="w-20 accent-slate-900" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Lienzo Interactivo 3D (Arrastrar para rotar en cualquier ángulo) -->
+            <div id="orbitStage3D" class="orbit-stage-3d relative w-full min-h-[450px] sm:min-h-[500px] rounded-3xl bg-slate-50/70 bg-swiss-grid border border-slate-200/90 flex items-center justify-center">
+              
+              <!-- Indicador flotante de interacción -->
+              <div class="absolute top-4 left-4 z-30 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur border border-slate-200 text-[11px] font-semibold text-slate-600 flex items-center gap-2 pointer-events-none">
+                <i class="ph-bold ph-hand-grabbing text-slate-900"></i>
+                <span>Arrastra libremente para rotar el objeto en 360° • Rueda para zoom</span>
+              </div>
+
+              <!-- Leyenda de Capas en el costado derecho -->
+              <div class="absolute top-4 right-4 z-30 bg-white/90 backdrop-blur border border-slate-200 rounded-2xl p-3 space-y-1.5 text-[11px] pointer-events-none">
+                <div class="font-mono font-bold uppercase text-[9px] tracking-widest text-slate-400">Desglose de Placas</div>
+                <div class="flex items-center gap-2 font-bold text-slate-800"><span class="w-2 h-2 rounded-full bg-indigo-900"></span>Capa 3 (Sup): Tarde</div>
+                <div class="flex items-center gap-2 font-bold text-slate-800"><span class="w-2 h-2 rounded-full bg-sky-500"></span>Capa 2 (Med): Mediodía</div>
+                <div class="flex items-center gap-2 font-bold text-slate-800"><span class="w-2 h-2 rounded-full bg-amber-400"></span>Capa 1 (Base): Mañana</div>
+              </div>
+
+              <!-- Ensamblaje 3D de las 3 Placas de Acrílico -->
+              <div id="orbitSceneAssembly" class="orbit-scene-assembly">
+                <!-- Las 3 placas de acrílico se inyectan y actualizan dinámicamente aquí -->
+              </div>
+
+            </div>
+          </div>
+
+          <!-- =============================================================
+               MODO 3: PROYECCIÓN TOTAL DE DATOS (SÍNTESIS PURA DE CÍRCULOS)
+               ============================================================= -->
+          <div id="viewContainerProjection" class="hidden flex-col justify-between space-y-4 h-full">
+
+            <!-- Sub-barra de modos de Proyección Pura -->
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-1">Modo de Proyección:</span>
+                <button id="btnProjTotal" onclick="setProjectionSubmode('total')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition">
+                  Síntesis Total (Huella Pura)
+                </button>
+                <button id="btnProjMatrix" onclick="setProjectionSubmode('matrix')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:border-slate-900 transition">
+                  Matriz 3×3 (Lugar × Horario)
+                </button>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4 text-xs">
+                <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                  <input id="chkProjGuides" type="checkbox" checked onchange="renderProjectionView()" class="rounded accent-slate-900" />
+                  <span>Guías Mínimas de Ejes</span>
+                </label>
+                <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                  <input id="chkProjAura" type="checkbox" checked onchange="renderProjectionView()" class="rounded accent-slate-900" />
+                  <span>Halos de Resonancia</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Lienzo Blanco Despojado de Hardware: Solo los Círculos como Proyección Total -->
+            <div id="projectionStageCanvas" class="relative w-full min-h-[450px] sm:min-h-[500px] rounded-3xl bg-white border border-slate-200/90 overflow-hidden flex items-center justify-center p-6">
+              <!-- Se renderiza dinámicamente la Síntesis Total o la Matriz 3x3 -->
+            </div>
+
+          </div>
+
+          <!-- Pie común del escenario con estado de filtro -->
+          <div class="pt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+            <span id="boardStatusCaption">
+              Mostrando <strong class="text-slate-900">3 lugares consolidados</strong> • <strong class="text-slate-900">3 capas horarias</strong>
+            </span>
+            <div class="flex items-center gap-4">
+              <span id="visiblePiecesCount" class="font-mono font-bold text-slate-900">24 mediciones activas</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA (3 COLS): INSPECTOR COMPACTO + SÍNTESIS EN VIVO + MODO AUTOR -->
+        <div class="lg:col-span-3 flex flex-col justify-between space-y-4">
+
+          <!-- BLOQUE 1: BALANCE ACÚSTICO EN VIVO DEL FILTRO ACTUAL -->
+          <div class="p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Síntesis del Filtro</span>
+              <span id="liveFilterBadge" class="text-[10px] font-mono font-bold text-slate-700 bg-white px-2 py-0.5 rounded-full border border-slate-200">N = 24</span>
+            </div>
+
+            <!-- Barra multicapa de composición cromática -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-[11px] font-semibold text-slate-600">
+                <span>Huella Cromática</span>
+                <span id="liveDominantSource" class="font-bold text-slate-900">Equilibrado</span>
+              </div>
+              <div id="liveMixBar" class="w-full h-3 rounded-full bg-slate-200 overflow-hidden flex gap-0.5 p-0.5"></div>
+            </div>
+
+            <!-- Promedios en vivo de Agradabilidad (Y) y Permanencia (X) -->
+            <div class="grid grid-cols-2 gap-2.5 pt-1">
+              <div class="p-2.5 rounded-2xl bg-white border border-slate-200/80">
+                <span class="text-[9px] font-mono uppercase tracking-wider text-slate-400 block">Prom. Agradabilidad</span>
+                <span id="liveAvgAgradabilidad" class="text-base font-extrabold text-emerald-700 mt-0.5 block">😊 48%</span>
+              </div>
+              <div class="p-2.5 rounded-2xl bg-white border border-slate-200/80">
+                <span class="text-[9px] font-mono uppercase tracking-wider text-slate-400 block">Prom. Permanencia</span>
+                <span id="liveAvgPermanencia" class="text-base font-extrabold text-slate-900 mt-0.5 block">58%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 2: INSPECTOR DE LA PIEZA SELECCIONADA -->
+          <div class="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-3.5">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Ficha Seleccionada</span>
+                <span id="inspPieceId" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-900 font-mono font-bold text-[11px]">#P-01</span>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div id="inspPieceDot" class="w-10 h-10 rounded-full bg-[#5BB381] shrink-0 shadow-sm border border-black/10 mt-0.5"></div>
+                <div>
+                  <div id="inspPieceMeta" class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    Muelle Prat • Mañana
+                  </div>
+                  <h4 id="inspPieceTitle" class="text-xs sm:text-sm font-bold text-slate-900 leading-snug mt-0.5">
+                    Bandadas de gaviotas y brisa marina limpia
+                  </h4>
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Fuente emisora:</span>
+                  <span id="inspPieceSource" class="font-bold text-slate-900">Naturaleza</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Intensidad (Ø):</span>
+                  <span id="inspPieceIntensity" class="font-bold text-slate-900">Alta (Ø Grande)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Estado en el lugar:</span>
+                  <span id="inspPieceZone" class="font-bold text-slate-900">Reposo</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Capa horaria:</span>
+                  <span id="inspPieceTime" class="font-bold text-slate-900">Mañana</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Agradabilidad (Y):</span>
+                  <span id="inspPieceAgradabilidad" class="font-bold text-emerald-700">😊 76% Agradable</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Permanencia (X):</span>
+                  <span id="inspPiecePermanencia" class="font-bold text-slate-900">86% Invita a quedarse</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <button onclick="playSelectedPieceTone()" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-900 hover:text-white text-[11px] font-bold text-slate-800 flex items-center gap-1.5 transition">
+                <i class="ph-fill ph-speaker-high"></i> Escuchar Frecuencia
+              </button>
+              <button id="btnDeletePieceAuthor" onclick="deleteSelectedPiece()" class="hidden text-xs font-bold text-rose-600 hover:text-rose-800 items-center gap-1">
+                <i class="ph-bold ph-trash"></i> Borrar
+              </button>
+            </div>
+          </div>
+
+          <!-- BLOQUE 3: PANEL DE EDICIÓN RÁPIDA (SOLO VISIBLE EN MODO AUTOR) -->
+          <div id="authorCreatorPanel" class="hidden p-5 rounded-3xl bg-slate-900 text-white space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">Modo Autor Activo</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Lugar</label>
+                <select id="formPlace" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-semibold">
+                  <option value="muelle_prat">Muelle Prat</option>
+                  <option value="plaza_sotomayor">Plaza Sotomayor</option>
+                  <option value="plaza_echaurren">Plaza Echaurren</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Capa Horaria</label>
+                <select id="formTimeLayer" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-semibold">
+                  <option value="manana">Mañana</option>
+                  <option value="mediodia">Mediodía</option>
+                  <option value="tarde">Tarde</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Columna</label>
+                <select id="formMoment" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-semibold">
+                  <option value="reposo">Reposo</option>
+                  <option value="transito">Tránsito</option>
+                  <option value="interaccion">Interacción</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Fuente</label>
+                <select id="formSource" onchange="selectActiveSource(this.value)" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-semibold">
+                  <option value="transito">Tránsito</option>
+                  <option value="maquinaria">Maquinaria</option>
+                  <option value="personas">Personas</option>
+                  <option value="naturaleza">Naturaleza</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Intensidad</label>
+                <select id="formIntensity" onchange="selectActiveIntensity(this.value)" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-semibold">
+                  <option value="alta">Alta (Grande)</option>
+                  <option value="media">Media</option>
+                  <option value="baja">Baja (Chica)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] font-mono uppercase text-slate-400 block mb-1">Agradabilidad / Perm.</label>
+                <div class="flex gap-1">
+                  <input id="formAgradabilidad" type="number" min="10" max="92" value="75" class="w-1/2 rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-mono text-xs" title="Agradabilidad %" />
+                  <input id="formPermanencia" type="number" min="10" max="92" value="70" class="w-1/2 rounded-xl bg-slate-800 border border-slate-700 px-2 py-1.5 text-white font-mono text-xs" title="Permanencia %" />
+                </div>
+              </div>
+            </div>
+
+            <input id="formNote" type="text" placeholder="Descripción del sonido percibido..." class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-1.5 text-xs text-white" />
+
+            <button type="button" onclick="addPieceFromAuthorPanel()" class="w-full py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold uppercase tracking-wider text-[11px] transition">
+              + Insertar Medición
+            </button>
+
+            <div class="flex justify-between text-[10px] text-slate-400 pt-1">
+              <button onclick="resetBoardToFieldData()" class="underline hover:text-white">Restaurar base</button>
+              <button onclick="copyUpdatedJSONToClipboard()" class="underline hover:text-white">Copiar JSON</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         03 • HALLAZGOS DE DISEÑO DE SERVICIOS Y ANALÍTICA MULTIDIMENSIONAL
+         ===================================================================== -->
+    <section id="hallazgos" class="py-12 lg:py-16 border-b border-slate-200/80 space-y-10">
+
+      <!-- Encabezado + Exportación -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-slate-400 block">
+            03 • Lectura Analítica y Patrones Acústicos
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-slate-900 mt-1">
+            Hallazgos y Visualización Estadística
+          </h2>
+        </div>
+        <button onclick="exportCSV()" class="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-[0.14em] flex items-center gap-2 self-start md:self-end transition">
+          <i class="ph-bold ph-download-simple"></i>
+          <span>Descargar Dataset (CSV)</span>
+        </button>
+      </div>
+
+      <!-- 3 INSIGHTS EJECUTIVOS DE DISEÑO DE SERVICIOS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-[#5BB381]">Hallazgo 01 • Refugio Sonoro</span>
+            <i class="ph-fill ph-waves text-lg text-[#5BB381]"></i>
+          </div>
+          <h3 class="text-sm font-extrabold uppercase text-slate-900">Muelle Prat conserva la mayor invitación a permanecer</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            El predominio de sonidos de <strong>Naturaleza</strong> (oleaje y fauna marina) en la capa de la <strong>Mañana</strong> genera un 74% de agradabilidad media, actuando como amortiguador acústico frente a la maquinaria portuaria.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-[#0095D9]">Hallazgo 02 • Efecto Corredor</span>
+            <i class="ph-fill ph-bus text-lg text-[#0095D9]"></i>
+          </div>
+          <h3 class="text-sm font-extrabold uppercase text-slate-900">Plaza Sotomayor polariza el Tránsito frente a la Interacción</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Al <strong>Mediodía y Tarde</strong>, el flujo de locomoción colectiva desplaza las fichas hacia el cuadrante de <strong>baja permanencia (28%)</strong> en los bordes, mientras que el centro peatonal sostiene micro-zonas de conversación.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-3xl bg-slate-50 border border-slate-200/90 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-600">Hallazgo 03 • Identidad Barrial</span>
+            <i class="ph-fill ph-users-three text-lg text-amber-500"></i>
+          </div>
+          <h3 class="text-sm font-extrabold uppercase text-slate-900">Plaza Echaurren transforma intensidad alta en pertenencia</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            A diferencia del ruido mecánico, las fichas amarillas de <strong>Personas</strong> con intensidad alta al <strong>Mediodía</strong> mantienen una alta permanencia (76%) cuando el encuestado se encuentra en <strong>Interacción</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- GRILLA 2×2 DE GRÁFICOS PERFECTAMENTE PROPORCIONADOS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+
+        <!-- GRÁFICO 1: Fuentes Sonoras por Lugar -->
+        <div class="p-6 rounded-3xl bg-white border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Gráfico 01 • Comparativa Territorial</span>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">Proporción de Fuentes Emisoras por Lugar</h3>
+            <p class="text-xs text-slate-500">Distribución porcentual de registros en Muelle Prat, Plaza Sotomayor y Plaza Echaurren.</p>
+          </div>
+
+          <div id="chartSourcesByPlace" class="space-y-4 my-auto py-2"></div>
+
+          <div class="pt-3 border-t border-slate-100 flex flex-wrap gap-4 text-[11px] font-bold text-slate-700">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0095D9]"></span>Tránsito</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D91E36]"></span>Maquinaria</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F2D024]"></span>Personas</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#5BB381]"></span>Naturaleza</span>
           </div>
         </div>
 
-        <!-- Barra de Síntesis de Arquitectura de Datos (KPIs del Levantamiento) -->
-        <div class="mt-14 pt-8 border-t border-white/15 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <p class="text-[10px] tracking-[0.22em] uppercase text-zinc-400 mb-1">01 · Territorio</p>
-            <p class="text-xl sm:text-2xl font-bold text-white">3 Lugares Medidos</p>
-            <p class="text-xs text-zinc-400 mt-1">Muelle Prat · Plaza Sotomayor · Plaza Echaurren</p>
+        <!-- GRÁFICO 2: Evolución por Capas Horarias (Mañana, Mediodía, Tarde) -->
+        <div class="p-6 rounded-3xl bg-white border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Gráfico 02 • Dinámica Temporal (3 Capas)</span>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">Composición y Agradabilidad: Mañana, Mediodía y Tarde</h3>
+            <p class="text-xs text-slate-500">Mutación de las fuentes dominantes y del bienestar acústico a lo largo de las 3 placas de acrílico.</p>
           </div>
+
+          <div id="chartByTimeLayer" class="space-y-4 my-auto py-2"></div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Cada barra representa una capa física del artefacto</span>
+            <span class="font-mono font-bold text-slate-700">Mañana → Mediodía → Tarde</span>
+          </div>
+        </div>
+
+        <!-- GRÁFICO 3: Mapa Cartesiano de Agradabilidad (Y) vs Permanencia (X) -->
+        <div class="p-6 rounded-3xl bg-white border border-slate-200/90 flex flex-col justify-between space-y-4">
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Gráfico 03 • Matriz de Experiencia</span>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">Cruce Cartesiano: Agradabilidad (Y) vs. Permanencia (X)</h3>
+            <p class="text-xs text-slate-500">Haz clic sobre cualquier círculo para inspeccionar cómo su posición correlaciona agrado e invitación a quedarse.</p>
+          </div>
+
+          <div class="relative w-full aspect-[16/9] bg-slate-50/70 rounded-2xl border border-slate-200/80 p-3 overflow-hidden">
+            <svg id="scatterSvg" viewBox="0 0 520 290" class="w-full h-full overflow-visible"></svg>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+            <span>Cuadrante Sup-Der: <strong class="text-emerald-700">Armonía y Permanencia</strong></span>
+            <span>Cuadrante Inf-Izq: <strong class="text-rose-600">Saturación y Expulsión</strong></span>
+          </div>
+        </div>
+
+        <!-- GRÁFICO 4: Intensidad y Agradabilidad según Columna Grabada (Reposo, Tránsito, Interacción) -->
+        <div class="p-6 rounded-3xl bg-white border border-slate-200/90 flex flex-col justify-between space-y-5">
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Gráfico 04 • Columnas Grabadas en el Acrílico</span>
+            <h3 class="text-lg font-extrabold uppercase text-slate-900">Intensidad Percibida según Situación en el Lugar</h3>
+            <p class="text-xs text-slate-500">Comparativa de diámetros de pieza (Alta, Media y Baja) cuando el entrevistado está en Reposo, Tránsito o Interacción.</p>
+          </div>
+
+          <div id="chartIntensityByMoment" class="space-y-4 my-auto py-2"></div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#1D2A62]">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#1D2A62] inline-block"></span>Alta (Ø Grande)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1D2A62]/65 inline-block"></span>Media</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#1D2A62]/35 inline-block"></span>Baja (Ø Chica)</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         04 • MATRIZ DE DATOS Y BASE DE REGISTROS (PROTEGIDA CON MODO AUTOR)
+         ===================================================================== -->
+    <section id="datos" class="py-12 lg:py-16 space-y-10">
+
+      <!-- TABLA 1: MATRIZ SÍNTESIS POR LUGAR Y CAPA HORARIA -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <p class="text-[10px] tracking-[0.22em] uppercase text-zinc-400 mb-1">02 · Temporalidad</p>
-            <p class="text-xl sm:text-2xl font-bold text-white">3 Capas de Acrílico</p>
-            <p class="text-xs text-zinc-400 mt-1">M
+            <span class="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-slate-400 block">
+              04 • Tabulación de Resultados
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 mt-0.5">
+              Matriz Resumen por Lugar y Capa Horaria
+            </h2>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">9 Cruces Territoriales × Temporales</span>
+        </div>
+
+        <div class="overflow-x-auto rounded-3xl border border-slate-200/90 bg-white">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50/80 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                <th class="py-3.5 px-4">Lugar en Barrio Puerto</th>
+                <th class="py-3.5 px-4">Capa Horaria</th>
+                <th class="py-3.5 px-4">Muestras</th>
+                <th class="py-3.5 px-4">Fuente Dominante</th>
+                <th class="py-3.5 px-4">Intensidad Frecuente</th>
+                <th class="py-3.5 px-4">Prom. Agradabilidad (Eje Y)</th>
+                <th class="py-3.5 px-4">Prom. Permanencia (Eje X)</th>
+              </tr>
+            </thead>
+            <tbody id="summaryTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLA 2: REGISTRO DETALLADO DE MEDICIONES (SOLO EDITABLE POR EL AUTOR) -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 block">Base de Datos Empírica</span>
+            <h3 class="text-xl sm:text-2xl font-extrabold uppercase text-slate-900 mt-0.5">
+              Registro Individual de Fichas de Percepción Sonora
+            </h3>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <span id="tableEditStatusBadge" class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider">
+              🔒 Solo Lectura (Protegido)
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-3xl border border-slate-200/90 bg-white max-h-[440px] overflow-y-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+              <tr>
+                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Lugar</th>
+                <th class="py-3 px-4">Capa Horaria</th>
+                <th class="py-3 px-4">Columna (Grabado)</th>
+                <th class="py-3 px-4">Fuente Sonora</th>
+                <th class="py-3 px-4">Intensidad</th>
+                <th class="py-3 px-4">Agradabilidad (Y)</th>
+                <th class="py-3 px-4">Permanencia (X)</th>
+                <th class="py-3 px-4">Nota / Escucha Ciudadana</th>
+                <th id="authorActionHeader" class="py-3 px-4 hidden text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="fullRecordsTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         CRÉDITOS DEL EQUIPO GRUPO 2 — E[AD] PUCV
+         ===================================================================== -->
+    <footer class="py-12 border-t border-slate-200/80">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-5 space-y-1.5">
+          <span class="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-slate-400 block">
+            Escuela de Arquitectura y Diseño • PUCV
+          </span>
+          <h3 class="text-lg font-extrabold uppercase text-slate-900">
+            Proyecto de Visualización — Grupo 2
+          </h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Taller de Diseño de Servicios 2026. Levantamiento de percepción sonora en Muelle Prat, Plaza Sotomayor y Plaza Echaurren.
+          </p>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-wrap gap-2 lg:justify-end">
+          <a href="https://wiki.ead.pucv.cl/Matias_Cordova_Arce" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Matías Córdova Arce</a>
+          <a href="https://wiki.ead.pucv.cl/Mateo_Mackay" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Mateo Mackay</a>
+          <a href="https://wiki.ead.pucv.cl/Francisco_Daniou" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Francisco Daniou</a>
+          <a href="https://wiki.ead.pucv.cl/Sof%C3%ADa_Vera" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Sofía Vera</a>
+          <a href="https://wiki.ead.pucv.cl/Piera_Ivelic_Porzio" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Piera Ivelic Porzio</a>
+          <a href="https://wiki.ead.pucv.cl/Sof%C3%ADa_Rojas" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Sofía Rojas</a>
+          <a href="https://wiki.ead.pucv.cl/Catalina_Cabezas" target="_blank" class="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-900 hover:text-white border border-slate-200 text-xs font-semibold transition">Catalina Cabezas</a>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- =====================================================================
+       MODAL DE ACCESO EXCLUSIVO DEL AUTOR (CANDADO PARA EDITAR DATOS)
+       ===================================================================== -->
+  <div id="authorAuthModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-7 border border-slate-200 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 block">Control de Edición</span>
+          <h3 class="text-lg font-extrabold uppercase text-slate-900 mt-0.5">Desbloquear Modo Autor</h3>
+        </div>
+        <button onclick="closeAuthorModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500 leading-relaxed">
+        Para que únicamente tú puedas modificar las mediciones del proyecto, ingresa la clave del grupo. Los demás visitantes solo pueden explorar vistas y filtros.
+      </p>
+
+      <div class="space-y-2">
+        <label class="block text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">Clave del Autor</label>
+        <input id="authorPinInput" type="password" placeholder="Ingresa: grupo2" onkeydown="if(event.key==='Enter') verifyAuthorPin()" class="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
+        <p id="authorPinError" class="hidden text-xs font-semibold text-rose-600">Clave incorrecta. Intenta con: grupo2</p>
+        <p class="text-[11px] text-slate-400">Clave activa: <code class="font-mono font-bold text-slate-700">grupo2</code></p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-1">
+        <button onclick="closeAuthorModal()" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900">
+          Cancelar
+        </button>
+        <button onclick="verifyAuthorPin()" class="px-5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider">
+          Habilitar Edición
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST -->
+  <div id="toastNotification" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+    Datos actualizados
+  </div>
+
+  <!-- =====================================================================
+       ARQUITECTURA JAVASCRIPT MODULAR: ESTADO CENTRAL, 2D, 3D LIBRE Y PROYECCIÓN PURA
+       ===================================================================== -->
+  <script>
+    // 1. TAXONOMÍA Y CONFIGURACIÓN DEL INSTRUMENTO
+    const SOURCES_CONFIG = {
+      transito:   { label: 'Tránsito',             hex: '#0095D9', rgba: 'rgba(0, 149, 217, 0.75)', cssClass: 'mica-transito',   freq: 195 },
+      maquinaria: { label: 'Maquinaria Portuaria', hex: '#D91E36', rgba: 'rgba(217, 30, 54, 0.75)', cssClass: 'mica-maquinaria', freq: 115 },
+      personas:   { label: 'Personas',             hex: '#F2D024', rgba: 'rgba(242, 208, 36, 0.82)', cssClass: 'mica-personas',   freq: 440 },
+      naturaleza: { label: 'Naturaleza',           hex: '#5BB381', rgba: 'rgba(91, 179, 129, 0.78)', cssClass: 'mica-naturaleza', freq: 587 }
+    };
+
+    const INTENSITY_CONFIG = {
+      alta:  { label: 'Alta (Ø Grande)',  short: 'Alta',  sizePx: 82, scaleMobile: 0.68 },
+      media: { label: 'Media (Ø Mediana)', short: 'Media', sizePx: 56, scaleMobile: 0.68 },
+      baja:  { label: 'Baja (Ø Pequeña)', short: 'Baja',  sizePx: 36, scaleMobile: 0.68 }
+    };
+
+    const PLACES_CONFIG = {
+      muelle_prat:     { id: 'muelle_prat',     name: 'Muelle Prat',     short: 'Muelle Prat' },
+      plaza_sotomayor: { id: 'plaza_sotomayor', name: 'Plaza Sotomayor', short: 'P. Sotomayor' },
+      plaza_echaurren: { id: 'plaza_echaurren', name: 'Plaza Echaurren', short: 'P. Echaurren' }
+    };
+
+    const TIME_LAYERS_CONFIG = {
+      manana:   { id: 'manana',   label: 'Mañana',   hours: '09:00–12:00', badgeColor: '#F59E0B' },
+      mediodia: { id: 'mediodia', label: 'Mediodía', hours: '12:00–15:00', badgeColor: '#0EA5E9' },
+      tarde:    { id: 'tarde',    label: 'Tarde',    hours: '15:00–18:30', badgeColor: '#1E1B4B' }
+    };
+
+    const MOMENTS_CONFIG = {
+      reposo:      { id: 'reposo',      label: 'Reposo',      minX: 8,  maxX: 32, centerX: 20 },
+      transito:    { id: 'transito',    label: 'Tránsito',    minX: 35, maxX: 65, centerX: 50 },
+      interaccion: { id: 'interaccion', label: 'Interacción', minX: 68, maxX: 92, centerX: 80 }
+    };
+
+    // 2. DATASET INICIAL LEVANTADO EN BARRIO PUERTO
+    const INITIAL_PIECES = [
+      // MUELLE PRAT
+      { id: 'P-01', place: 'muelle_prat', timeLayer: 'manana',   moment: 'reposo',      source: 'naturaleza', intensity: 'alta',  x: 16.5, y: 24.0, permanencia: 86, note: 'Bandadas de gaviotas y brisa marina limpia al iniciar la mañana' },
+      { id: 'P-02', place: 'muelle_prat', timeLayer: 'manana',   moment: 'transito',    source: 'naturaleza', intensity: 'baja',  x: 47.0, y: 26.0, permanencia: 78, note: 'Oleaje suave contra los pilotes mientras se camina por el borde' },
+      { id: 'P-03', place: 'muelle_prat', timeLayer: 'manana',   moment: 'interaccion', source: 'maquinaria', intensity: 'baja',  x: 71.0, y: 34.0, permanencia: 65, note: 'Preparación de motores de lanchas turísticas en el embarcadero' },
+      { id: 'P-04', place: 'muelle_prat', timeLayer: 'mediodia', moment: 'reposo',      source: 'naturaleza', intensity: 'media', x: 27.0, y: 42.0, permanencia: 80, note: 'Sonido del mar acompañado de sol de mediodía en las bancas' },
+      { id: 'P-05', place: 'muelle_prat', timeLayer: 'mediodia', moment: 'transito',    source: 'maquinaria', intensity: 'media', x: 51.5, y: 60.0, permanencia: 44, note: 'Sirena de buque portacontenedores y grúas operando en la dársena' },
+      { id: 'P-06', place: 'muelle_prat', timeLayer: 'mediodia', moment: 'interaccion', source: 'personas',   intensity: 'alta',  x: 76.0, y: 49.0, permanencia: 74, note: 'Pregones de lancheros invitando a paseos por la bahía y familias' },
+      { id: 'P-07', place: 'muelle_prat', timeLayer: 'tarde',    moment: 'reposo',      source: 'naturaleza', intensity: 'media', x: 15.0, y: 76.0, permanencia: 52, note: 'Ráfagas fuertes de viento costero al atardecer' },
+      { id: 'P-08', place: 'muelle_prat', timeLayer: 'tarde',    moment: 'reposo',      source: 'maquinaria', intensity: 'alta',  x: 24.5, y: 71.0, permanencia: 35, note: 'Motores diésel de remolcadores y lanchas regresando al muelle' },
+      { id: 'P-09', place: 'muelle_prat', timeLayer: 'tarde',    moment: 'interaccion', source: 'naturaleza', intensity: 'media', x: 70.5, y: 24.0, permanencia: 84, note: 'Aves marinas y oleaje escuchados al conversar frente al mar' },
+
+      // PLAZA SOTOMAYOR
+      { id: 'P-10', place: 'plaza_sotomayor', timeLayer: 'manana',   moment: 'reposo',      source: 'transito',   intensity: 'media', x: 14.0, y: 54.0, permanencia: 50, note: 'Rumor perimetral de trolebuses y autos por Av. Errázuriz' },
+      { id: 'P-11', place: 'plaza_sotomayor', timeLayer: 'manana',   moment: 'transito',    source: 'transito',   intensity: 'alta',  x: 50.5, y: 31.0, permanencia: 48, note: 'Semáforo sonoro peatonal y flujo matinal hacia Estación Puerto' },
+      { id: 'P-12', place: 'plaza_sotomayor', timeLayer: 'manana',   moment: 'interaccion', source: 'personas',   intensity: 'media', x: 80.5, y: 31.5, permanencia: 79, note: 'Apertura de puestos y conversación tranquila en feria de artesanos' },
+      { id: 'P-13', place: 'plaza_sotomayor', timeLayer: 'mediodia', moment: 'reposo',      source: 'personas',   intensity: 'media', x: 16.5, y: 72.0, permanencia: 58, note: 'Grupos esperando locomoción y murmullo cerca del monumento' },
+      { id: 'P-14', place: 'plaza_sotomayor', timeLayer: 'mediodia', moment: 'transito',    source: 'transito',   intensity: 'alta',  x: 49.5, y: 78.0, permanencia: 25, note: 'Microbuses acelerando y bocinas en el cruce hacia calle Serrano' },
+      { id: 'P-15', place: 'plaza_sotomayor', timeLayer: 'mediodia', moment: 'interaccion', source: 'personas',   intensity: 'media', x: 82.5, y: 50.0, permanencia: 72, note: 'Guías turísticos explicando la historia del barrio a visitantes' },
+      { id: 'P-16', place: 'plaza_sotomayor', timeLayer: 'tarde',    moment: 'reposo',      source: 'transito',   intensity: 'alta',  x: 19.0, y: 77.5, permanencia: 28, note: 'Congestión vehicular de hora punta reflejada en las fachadas' },
+      { id: 'P-17', place: 'plaza_sotomayor', timeLayer: 'tarde',    moment: 'interaccion', source: 'transito',   intensity: 'baja',  x: 78.2, y: 75.0, permanencia: 42, note: 'Tráfico lejano percibido mientras se conversa en el centro de la plaza' },
+      { id: 'P-18', place: 'plaza_sotomayor', timeLayer: 'tarde',    moment: 'transito',    source: 'personas',   intensity: 'media', x: 55.5, y: 55.0, permanencia: 60, note: 'Flujo de salida de trabajadores y estudiantes hacia el tren' },
+
+      // PLAZA ECHAURREN
+      { id: 'P-19', place: 'plaza_echaurren', timeLayer: 'manana',   moment: 'reposo',      source: 'personas',   intensity: 'alta',  x: 20.5, y: 58.0, permanencia: 68, note: 'Conversaciones de vecinos habituales en los escaños bajo los árboles' },
+      { id: 'P-20', place: 'plaza_echaurren', timeLayer: 'manana',   moment: 'reposo',      source: 'maquinaria', intensity: 'media', x: 23.0, y: 81.0, permanencia: 30, note: 'Cortinas metálicas y descarga de camiones abastecedores' },
+      { id: 'P-21', place: 'plaza_echaurren', timeLayer: 'manana',   moment: 'interaccion', source: 'maquinaria', intensity: 'baja',  x: 84.5, y: 61.5, permanencia: 46, note: 'Carros de carga y ventiladores de locales tradicionales' },
+      { id: 'P-22', place: 'plaza_echaurren', timeLayer: 'mediodia', moment: 'transito',    source: 'maquinaria', intensity: 'media', x: 45.0, y: 73.5, permanencia: 32, note: 'Vibración mecánica y frenos de aire reverberando en las 4 esquinas' },
+      { id: 'P-23', place: 'plaza_echaurren', timeLayer: 'mediodia', moment: 'interaccion', source: 'personas',   intensity: 'alta',  x: 75.5, y: 46.0, permanencia: 76, note: 'Pregones comerciales, música popular y alta vida social barrial' },
+      { id: 'P-24', place: 'plaza_echaurren', timeLayer: 'tarde',    moment: 'interaccion', source: 'transito',   intensity: 'alta',  x: 72.5, y: 66.5, permanencia: 36, note: 'Paso de locomoción colectiva sobre adoquines compitiendo con la voz' }
+    ];
+
+    const STORAGE_KEY = 'ead_grupo2_percepcion_sonora_v4';
+
+    // Estado centralizado de la aplicación
+    let pieces = loadPiecesFromStorage();
+    let currentLabMode = '2d';          // '2d' | '3d' | 'projection'
+    let projectionSubmode = 'total';    // 'total' | 'matrix'
+    let currentPlaceFilter = 'ALL';
+    let currentTimeFilter = 'ALL';
+    let currentSourceFilter = 'ALL';
+    let activeSource = 'transito';
+    let activeIntensity = 'alta';
+    let selectedPieceId = pieces[0]?.id || 'P-01';
+    let isAuthorUnlocked = false;
+    let draggingPieceId = null;
+
+    // Estado de cámara 3D Libre
+    let cam3D = {
+      rotX: 54,
+      rotZ: -28,
+      gapZ: 52,
+      scale: 0.92,
+      isDragging: false,
+      startX: 0,
+      startY: 0,
+      startRotZ: -28,
+      startRotX: 54
+    };
+
+    function loadPiecesFromStorage() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(INITIAL_PIECES));
+    }
+
+    function savePiecesToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(pieces));
+      } catch (e) {}
+    }
+
+    function getFilteredPieces() {
+      return pieces.filter(p => {
+        const matchPlace = (currentPlaceFilter === 'ALL' || p.place === currentPlaceFilter);
+        const matchTime  = (currentTimeFilter === 'ALL' || p.timeLayer === currentTimeFilter);
+        const matchSrc   = (currentSourceFilter === 'ALL' || p.source === currentSourceFilter);
+        return matchPlace && matchTime && matchSrc;
+      });
+    }
+
+    function getAgradabilidadFromY(y) {
+      return Math.max(5, Math.min(98, Math.round(100 - y)));
+    }
+
+    // 3. ANIMACIÓN INTRODUCTORIA EN EL HERO COMPACTO
+    function initHeroSoundAnimation() {
+      const container = document.getElementById('heroSoundCanvas');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const baseNodes = [
+        { x: 34, y: 42, size: 120, color: 'rgba(0, 149, 217, 0.58)', delay: '0s' },
+        { x: 62, y: 38, size: 105, color: 'rgba(242, 208, 36, 0.68)', delay: '1.1s' },
+        { x: 48, y: 60, size: 115, color: 'rgba(217, 30, 54, 0.54)', delay: '2.2s' },
+        { x: 30, y: 60, size: 82,  color: 'rgba(91, 179, 129, 0.65)', delay: '0.6s' },
+        { x: 67, y: 58, size: 74,  color: 'rgba(0, 149, 217, 0.50)', delay: '1.7s' }
+      ];
+
+      baseNodes.forEach(node => {
+        const el = document.createElement('div');
+        el.className = 'hero-sound-node';
+        el.style.width = `${node.size}px`;
+        el.style.height = `${node.size}px`;
+        el.style.left = `${node.x}%`;
+        el.style.top = `${node.y}%`;
+        el.style.backgroundColor = node.color;
+        el.style.animationDelay = node.delay;
+        container.appendChild(el);
+      });
+
+      const pulseNodes = [
+        { x: 25, y: 30, size: 78, color: 'rgba(91, 179, 129, 0.62)', delay: '0s' },
+        { x: 72, y: 32, size: 92, color: 'rgba(0, 149, 217, 0.56)', delay: '1.6s' },
+        { x: 54, y: 26, size: 62, color: 'rgba(217, 30, 54, 0.56)', delay: '3.0s' },
+        { x: 40, y: 70, size: 88, color: 'rgba(242, 208, 36, 0.66)', delay: '4.4s' }
+      ];
+
+      pulseNodes.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'hero-sound-pulse';
+        el.style.width = `${p.size}px`;
+        el.style.height = `${p.size}px`;
+        el.style.left = `${p.x}%`;
+        el.style.top = `${p.y}%`;
+        el.style.backgroundColor = p.color;
+        el.style.animationDelay = p.delay;
+        container.appendChild(el);
+      });
+    }
+
+    // 4. CONMUTADOR DE LOS 3 MODOS DEL LABORATORIO (2D | 3D LIBRE | PROYECCIÓN TOTAL)
+    function switchLabMode(mode) {
+      currentLabMode = mode;
+      const v2d = document.getElementById('viewContainer2D');
+      const v3d = document.getElementById('viewContainer3D');
+      const vProj = document.getElementById('viewContainerProjection');
+
+      const t2d = document.getElementById('tabMode2D');
+      const t3d = document.getElementById('tabMode3D');
+      const tProj = document.getElementById('tabModeProjection');
+
+      v2d.classList.add('hidden');
+      v3d.classList.add('hidden');
+      v3d.classList.remove('flex');
+      vProj.classList.add('hidden');
+      vProj.classList.remove('flex');
+
+      const inactiveClass = 'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 flex items-center gap-2 transition';
+      const activeClass   = 'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900 text-white shadow-sm flex items-center gap-2 transition';
+
+      t2d.className = inactiveClass;
+      t3d.className = inactiveClass;
+      tProj.className = inactiveClass;
+
+      if (mode === '2d') {
+        v2d.classList.remove('hidden');
+        t2d.className = activeClass;
+        render2DBoard();
+      } else if (mode === '3d') {
+        v3d.classList.remove('hidden');
+        v3d.classList.add('flex');
+        t3d.className = activeClass;
+        render3DScene();
+      } else if (mode === 'projection') {
+        vProj.classList.remove('hidden');
+        vProj.classList.add('flex');
+        tProj.className = activeClass;
+        renderProjectionView();
+      }
+    }
+
+    // 5. MODO 1: RENDERIZADO DEL TABLERO 2D
+    function render2DBoard() {
+      const timeKeys = ['manana', 'mediodia', 'tarde'];
+      timeKeys.forEach(tk => {
+        const layer = document.getElementById(`layer2d-${tk}`);
+        if (!layer) return;
+        layer.innerHTML = '';
+        layer.style.opacity = (currentTimeFilter === 'ALL' || currentTimeFilter === tk) ? '1' : '0.08';
+      });
+
+      const isMobile = window.innerWidth < 640;
+
+      pieces.forEach(p => {
+        if (currentPlaceFilter !== 'ALL' && p.place !== currentPlaceFilter) return;
+        if (currentSourceFilter !== 'ALL' && p.source !== currentSourceFilter) return;
+
+        const layer = document.getElementById(`layer2d-${p.timeLayer}`);
+        if (!layer) return;
+
+        const matchTime = (currentTimeFilter === 'ALL' || currentTimeFilter === p.timeLayer);
+        const srcCfg = SOURCES_CONFIG[p.source];
+        const intCfg = INTENSITY_CONFIG[p.intensity];
+        const diameter = isMobile ? Math.round(intCfg.sizePx * intCfg.scaleMobile) : intCfg.sizePx;
+
+        const el = document.createElement('div');
+        const isSelected = (p.id === selectedPieceId);
+        el.className = `mica-piece pointer-events-auto ${srcCfg.cssClass} ${isSelected ? 'selected-mica' : ''} ${isAuthorUnlocked ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`;
+        el.style.width = `${diameter}px`;
+        el.style.height = `${diameter}px`;
+        el.style.left = `${p.x}%`;
+        el.style.top = `${p.y}%`;
+        el.style.zIndex = p.intensity === 'alta' ? 20 : (p.intensity === 'media' ? 30 : 40);
+
+        if (!matchTime) el.style.pointerEvents = 'none';
+
+        el.onmousedown = (e) => { if (isAuthorUnlocked) startDragPiece(e, p.id); };
+        el.ontouchstart = (e) => { if (isAuthorUnlocked) startDragPiece(e, p.id); };
+        el.onclick = (e) => {
+          e.stopPropagation();
+          selectPiece(p.id, true);
+        };
+
+        layer.appendChild(el);
+      });
+    }
+
+    // 6. MODO 2: EXPLORACIÓN 3D LIBRE MULTI-ÁNGULO (ROTACIÓN 360° CON PUNTERO)
+    function init3DOrbitEvents() {
+      const stage = document.getElementById('orbitStage3D');
+      if (!stage) return;
+
+      stage.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.mica-3d-piece')) return;
+        cam3D.isDragging = true;
+        cam3D.startX = e.clientX;
+        cam3D.startY = e.clientY;
+        cam3D.startRotZ = cam3D.rotZ;
+        cam3D.startRotX = cam3D.rotX;
+        stage.setPointerCapture(e.pointerId);
+      });
+
+      stage.addEventListener('pointermove', (e) => {
+        if (!cam3D.isDragging) return;
+        const dx = e.clientX - cam3D.startX;
+        const dy = e.clientY - cam3D.startY;
+        cam3D.rotZ = Math.max(-180, Math.min(180, Math.round(cam3D.startRotZ + dx * 0.45)));
+        cam3D.rotX = Math.max(0, Math.min(82, Math.round(cam3D.startRotX - dy * 0.35)));
+        sync3DSlidersAndTransform();
+      });
+
+      stage.addEventListener('pointerup', (e) => {
+        cam3D.isDragging = false;
+        try { stage.releasePointerCapture(e.pointerId); } catch (err) {}
+      });
+
+      stage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        cam3D.scale = Math.max(0.62, Math.min(1.25, Number((cam3D.scale + delta).toFixed(2))));
+        apply3DTransformOnly();
+      }, { passive: false });
+    }
+
+    function set3DCameraPreset(rotX, rotZ, gapZ, scale) {
+      cam3D.rotX = rotX;
+      cam3D.rotZ = rotZ;
+      cam3D.gapZ = gapZ;
+      cam3D.scale = scale;
+      sync3DSlidersAndTransform();
+      render3DScene();
+    }
+
+    function update3DFromSliders() {
+      cam3D.rotZ = Number(document.getElementById('sliderRotZ').value);
+      cam3D.rotX = Number(document.getElementById('sliderRotX').value);
+      cam3D.gapZ = Number(document.getElementById('sliderGapZ').value);
+      sync3DSlidersAndTransform();
+      render3DScene();
+    }
+
+    function sync3DSlidersAndTransform() {
+      document.getElementById('sliderRotZ').value = cam3D.rotZ;
+      document.getElementById('sliderRotX').value = cam3D.rotX;
+      document.getElementById('sliderGapZ').value = cam3D.gapZ;
+      document.getElementById('lblRotZ').textContent = `${cam3D.rotZ}°`;
+      document.getElementById('lblRotX').textContent = `${cam3D.rotX}°`;
+      document.getElementById('lblGapZ').textContent = `${cam3D.gapZ}px`;
+      apply3DTransformOnly();
+    }
+
+    function apply3DTransformOnly() {
+      const assembly = document.getElementById('orbitSceneAssembly');
+      if (!assembly) return;
+      const mobileFactor = window.innerWidth < 768 ? 0.56 : 1;
+      const finalScale = cam3D.scale * mobileFactor;
+      assembly.style.transform = `scale(${finalScale}) rotateX(${cam3D.rotX}deg) rotateZ(${cam3D.rotZ}deg)`;
+    }
+
+    function render3DScene() {
+      const assembly = document.getElementById('orbitSceneAssembly');
+      if (!assembly) return;
+      assembly.innerHTML = '';
+
+      const layersOrder = ['manana', 'mediodia', 'tarde'];
+
+      layersOrder.forEach((tk, idx) => {
+        const zOffset = (idx - 1) * cam3D.gapZ;
+        const isLayerActive = (currentTimeFilter === 'ALL' || currentTimeFilter === tk);
+
+        const sheet = document.createElement('div');
+        sheet.className = 'acrylic-sheet-3d';
+        sheet.style.transform = `translateZ(${zOffset}px)`;
+        sheet.style.opacity = isLayerActive ? '1' : '0.14';
+
+        // Grabado de las 3 columnas en cada placa 3D
+        sheet.innerHTML = `
+          <div class="absolute inset-0 grid grid-cols-3 pointer-events-none">
+            <div class="border-r border-slate-300/60 flex items-end justify-center pb-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Reposo</div>
+            <div class="border-r border-slate-300/60 flex items-end justify-center pb-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Tránsito</div>
+            <div class="flex items-end justify-center pb-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Interacción</div>
+          </div>
+          <div class="absolute top-2.5 left-3.5 px-2.5 py-0.5 rounded-full bg-white/90 border border-slate-300 text-[10px] font-mono font-bold uppercase text-slate-800 shadow-sm">
+            Capa ${idx + 1} • ${TIME_LAYERS_CONFIG[tk].label}
+          </div>
+          <div class="absolute top-2.5 right-3.5 text-[9px] font-mono text-slate-400">
+            Z: ${zOffset >= 0 ? '+' + zOffset : zOffset}px
+          </div>
+        `;
+
+        // Filtrar piezas de esta capa horaria
+        pieces.forEach(p => {
+          if (p.timeLayer !== tk) return;
+          if (currentPlaceFilter !== 'ALL' && p.place !== currentPlaceFilter) return;
+          if (currentSourceFilter !== 'ALL' && p.source !== currentSourceFilter) return;
+
+          const srcCfg = SOURCES_CONFIG[p.source];
+          const intCfg = INTENSITY_CONFIG[p.intensity];
+
+          const circle = document.createElement('div');
+          const isSelected = (p.id === selectedPieceId);
+          circle.className = `mica-3d-piece mica-piece ${srcCfg.cssClass} ${isSelected ? 'selected-mica' : ''} cursor-pointer`;
+          circle.style.width = `${intCfg.sizePx * 0.88}px`;
+          circle.style.height = `${intCfg.sizePx * 0.88}px`;
+          circle.style.left = `${p.x}%`;
+          circle.style.top = `${p.y}%`;
+          circle.style.transform = 'translate(-50%, -50%) translateZ(2px)';
+          circle.onclick = (e) => {
+            e.stopPropagation();
+            selectPiece(p.id, true);
+            render3DScene();
+          };
+
+          sheet.appendChild(circle);
+        });
+
+        assembly.appendChild(sheet);
+      });
+
+      apply3DTransformOnly();
+    }
+
+    // 7. MODO 3: PROYECCIÓN TOTAL DE DATOS (SÍNTESIS PURA DE CÍRCULOS SIN HARDWARE)
+    function setProjectionSubmode(submode) {
+      projectionSubmode = submode;
+      const btnTotal = document.getElementById('btnProjTotal');
+      const btnMatrix = document.getElementById('btnProjMatrix');
+
+      if (submode === 'total') {
+        btnTotal.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition';
+        btnMatrix.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:border-slate-900 transition';
+      } else {
+        btnMatrix.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition';
+        btnTotal.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:border-slate-900 transition';
+      }
+      renderProjectionView();
+    }
+
+    function renderProjectionView() {
+      const stage = document.getElementById('projectionStageCanvas');
+      if (!stage) return;
+      stage.innerHTML = '';
+
+      const showGuides = document.getElementById('chkProjGuides')?.checked ?? true;
+      const showAura = document.getElementById('chkProjAura')?.checked ?? true;
+      const activePool = getFilteredPieces();
+
+      if (projectionSubmode === 'total') {
+        // PROYECCIÓN TOTAL: Lienzo limpio donde solo se ven todos los círculos como una huella cromática pura
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative w-full aspect-[16/9] max-h-[460px] rounded-2xl overflow-hidden';
+
+        if (showGuides) {
+          wrapper.innerHTML += `
+            <div class="absolute inset-0 grid grid-cols-3 pointer-events-none">
+              <div class="border-r border-dashed border-slate-200 flex items-end justify-center pb-2 text-[10px] font-mono uppercase tracking-widest text-slate-300">Reposo</div>
+              <div class="border-r border-dashed border-slate-200 flex items-end justify-center pb-2 text-[10px] font-mono uppercase tracking-widest text-slate-300">Tránsito</div>
+              <div class="flex items-end justify-center pb-2 text-[10px] font-mono uppercase tracking-widest text-slate-300">Interacción</div>
+            </div>
+            <div class="absolute inset-x-8 top-1/2 border-t border-dotted border-slate-200 pointer-events-none"></div>
+            <div class="absolute top-3 left-4 text-[10px] font-mono uppercase tracking-widest text-slate-400 pointer-events-none">
+              😊 Alta Agradabilidad (Y)
+            </div>
+            <div class="absolute bottom-3 left-4 text-[10px] font-mono uppercase tracking-widest text-slate-400 pointer-events-none">
+              ☹️ Molestia Acústica (Y)
+            </div>
+            <div class="absolute top-3 right-4 text-[10px] font-mono uppercase tracking-widest text-slate-400 pointer-events-none">
+              Proyección Pura • N = ${activePool.length} círculos
+            </div>
+          `;
+        }
+
+        const isMobile = window.innerWidth < 640;
+
+        activePool.forEach(p => {
+          const srcCfg = SOURCES_CONFIG[p.source];
+          const intCfg = INTENSITY_CONFIG[p.intensity];
+          const d = isMobile ? Math.round(intCfg.sizePx * 0.72) : intCfg.sizePx;
+
+          // Halo de resonancia opcional
+          if (showAura) {
+            const aura = document.createElement('div');
+            aura.className = 'absolute rounded-full pointer-events-none';
+            aura.style.width = `${d * 1.65}px`;
+            aura.style.height = `${d * 1.65}px`;
+            aura.style.left = `${p.x}%`;
+            aura.style.top = `${p.y}%`;
+            aura.style.transform = 'translate(-50%, -50%)';
+            aura.style.background = `radial-gradient(circle, ${srcCfg.hex}28 0%, transparent 72%)`;
+            wrapper.appendChild(aura);
+          }
+
+          const node = document.createElement('div');
+          const isSelected = (p.id === selectedPieceId);
+          node.className = `pure-circle-node ${isSelected ? 'ring-2 ring-slate-900' : ''}`;
+          node.style.width = `${d}px`;
+          node.style.height = `${d}px`;
+          node.style.left = `${p.x}%`;
+          node.style.top = `${p.y}%`;
+          node.style.backgroundColor = srcCfg.rgba;
+          node.title = `${p.id} • ${PLACES_CONFIG[p.place].name} (${TIME_LAYERS_CONFIG[p.timeLayer].label}): ${p.note}`;
+          node.onclick = () => selectPiece(p.id, true);
+
+          wrapper.appendChild(node);
+        });
+
+        stage.appendChild(wrapper);
+      } else {
+        // MATRIZ COMPARATIVA 3×3 (3 Lugares × 3 Capas Horarias) mostrando únicamente la huella de círculos
+        const grid = document.createElement('div');
+        grid.className = 'w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5';
+
+        Object.keys(PLACES_CONFIG).forEach(placeKey => {
+          Object.keys(TIME_LAYERS_CONFIG).forEach(timeKey => {
+            const cellPieces = pieces.filter(p =>
+              p.place === placeKey &&
+              p.timeLayer === timeKey &&
+              (currentSourceFilter === 'ALL' || p.source === currentSourceFilter)
+            );
+
+            const cell = document.createElement('div');
+            cell.className = 'relative aspect-[16/10] rounded-2xl bg-slate-50/70 border border-slate-200/80 overflow-hidden p-2';
+            cell.innerHTML = `
+              <div class="flex items-center justify-between text-[9.5px] font-mono font-bold uppercase tracking-wider text-slate-500 px-1 relative z-20 pointer-events-none">
+                <span>${PLACES_CONFIG[placeKey].short}</span>
+                <span>${TIME_LAYERS_CONFIG[timeKey].label}</span>
+              </div>
+              ${showGuides ? `
+                <div class="absolute inset-0 grid grid-cols-3 pointer-events-none opacity-40">
+                  <div class="border-r border-dashed border-slate-300"></div>
+                  <div class="border-r border-dashed border-slate-300"></div>
+                  <div></div>
+                </div>
+              ` : ''}
+            `;
+
+            cellPieces.forEach(p => {
+              const srcCfg = SOURCES_CONFIG[p.source];
+              const intCfg = INTENSITY_CONFIG[p.intensity];
+              const d = Math.round(intCfg.sizePx * 0.42);
+
+              const dot = document.createElement('div');
+              dot.className = 'pure-circle-node';
+              dot.style.width = `${d}px`;
+              dot.style.height = `${d}px`;
+              dot.style.left = `${p.x}%`;
+              dot.style.top = `${p.y}%`;
+              dot.style.backgroundColor = srcCfg.rgba;
+              dot.onclick = () => selectPiece(p.id, true);
+              cell.appendChild(dot);
+            });
+
+            grid.appendChild(cell);
+          });
+        });
+
+        stage.appendChild(grid);
+      }
+    }
+
+    // 8. FILTROS UNIFICADOS Y SINCRONIZACIÓN DE TODAS LAS VISTAS
+    function setPlaceFilter(placeKey) {
+      currentPlaceFilter = placeKey;
+      if (placeKey !== 'ALL') {
+        const formPlace = document.getElementById('formPlace');
+        if (formPlace) formPlace.value = placeKey;
+      }
+
+      document.querySelectorAll('.place-btn').forEach(btn => {
+        btn.className = (btn.dataset.place === placeKey)
+          ? 'place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white transition'
+          : 'place-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition';
+      });
+
+      updateAllViews();
+    }
+
+    function setTimeLayerFilter(timeKey) {
+      currentTimeFilter = timeKey;
+      if (timeKey !== 'ALL') {
+        const formTime = document.getElementById('formTimeLayer');
+        if (formTime) formTime.value = timeKey;
+      }
+
+      document.querySelectorAll('.time-btn').forEach(btn => {
+        btn.className = (btn.dataset.time === timeKey)
+          ? 'time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white transition'
+          : 'time-btn px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white text-slate-600 border border-slate-200 hover:border-slate-900 transition';
+      });
+
+      updateAllViews();
+    }
+
+    function setSourceFilter(srcKey) {
+      currentSourceFilter = srcKey;
+      document.querySelectorAll('.srcfilter-btn').forEach(btn => {
+        const isMatch = (btn.dataset.srcfilter === srcKey);
+        if (btn.dataset.srcfilter === 'ALL') {
+          btn.className = isMatch
+            ? 'srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-slate-900 text-white transition'
+            : 'srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 transition';
+        } else {
+          btn.className = isMatch
+            ? 'srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-slate-900 text-white flex items-center gap-1.5 transition'
+            : 'srcfilter-btn px-3 py-1.5 rounded-full text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-900 flex items-center gap-1.5 transition';
+        }
+      });
+
+      updateAllViews();
+    }
+
+    function selectActiveSource(sourceKey) {
+      activeSource = sourceKey;
+      const formSource = document.getElementById('formSource');
+      if (formSource) formSource.value = sourceKey;
+
+      Object.keys(SOURCES_CONFIG).forEach(k => {
+        const btn = document.getElementById(`headerSource-${k}`);
+        if (!btn) return;
+        const circle = btn.querySelector('div');
+        if (k === sourceKey) {
+          circle.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900');
+        } else {
+          circle.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900');
+        }
+      });
+    }
+
+    function selectActiveIntensity(intKey) {
+      activeIntensity = intKey;
+      const formIntensity = document.getElementById('formIntensity');
+      if (formIntensity) formIntensity.value = intKey;
+
+      ['alta', 'media', 'baja'].forEach(k => {
+        const btn = document.getElementById(`headerInt-${k}`);
+        if (!btn) return;
+        const circle = btn.querySelector('div');
+        if (k === intKey) {
+          circle.classList.remove('opacity-80', 'opacity-70', 'opacity-75');
+          circle.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900');
+        } else {
+          circle.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900');
+          circle.classList.add('opacity-75');
+        }
+      });
+    }
+
+    // 9. CICLO CENTRAL DE ACTUALIZACIÓN DE VISTAS Y MÉTRICAS EN VIVO
+    function updateAllViews() {
+      const filtered = getFilteredPieces();
+
+      // Actualizar contadores y barra de estado
+      document.getElementById('heroTotalCount').textContent = `${pieces.length} Registros`;
+      const placeLabel = currentPlaceFilter === 'ALL' ? '3 lugares consolidados' : PLACES_CONFIG[currentPlaceFilter].name;
+      const timeLabel  = currentTimeFilter === 'ALL' ? '3 capas horarias' : `Capa ${TIME_LAYERS_CONFIG[currentTimeFilter].label}`;
+      document.getElementById('boardStatusCaption').innerHTML = `Mostrando <strong class="text-slate-900">${placeLabel}</strong> • <strong class="text-slate-900">${timeLabel}</strong>`;
+      document.getElementById('visiblePiecesCount').textContent = `${filtered.length} mediciones activas`;
+
+      // Actualizar tarjeta de Síntesis en Vivo en la columna derecha
+      document.getElementById('liveFilterBadge').textContent = `N = ${filtered.length}`;
+      const total = filtered.length || 1;
+      const mixBar = document.getElementById('liveMixBar');
+      mixBar.innerHTML = '';
+
+      let domKey = 'transito', maxCount = -1;
+      Object.keys(SOURCES_CONFIG).forEach(sk => {
+        const c = filtered.filter(p => p.source === sk).length;
+        if (c > maxCount) { maxCount = c; domKey = sk; }
+        const pct = Math.round((c / total) * 100);
+        if (pct > 0) {
+          const seg = document.createElement('div');
+          seg.style.width = `${pct}%`;
+          seg.style.backgroundColor = SOURCES_CONFIG[sk].hex;
+          seg.className = 'h-full rounded-full';
+          mixBar.appendChild(seg);
+        }
+      });
+
+      document.getElementById('liveDominantSource').textContent = filtered.length ? SOURCES_CONFIG[domKey].label : 'Sin datos';
+
+      const avgAg = filtered.length
+        ? Math.round(filtered.reduce((acc, p) => acc + getAgradabilidadFromY(p.y), 0) / filtered.length)
+        : 0;
+      const avgPerm = filtered.length
+        ? Math.round(filtered.reduce((acc, p) => acc + (p.permanencia ?? 60), 0) / filtered.length)
+        : 0;
+
+      const agEl = document.getElementById('liveAvgAgradabilidad');
+      agEl.textContent = `${avgAg >= 50 ? '😊' : '☹️'} ${avgAg}%`;
+      agEl.className = `text-base font-extrabold mt-0.5 block ${avgAg >= 50 ? 'text-emerald-700' : 'text-rose-600'}`;
+      document.getElementById('liveAvgPermanencia').textContent = `${avgPerm}%`;
+
+      // Renderizar escenario activo
+      if (currentLabMode === '2d') render2DBoard();
+      else if (currentLabMode === '3d') render3DScene();
+      else if (currentLabMode === 'projection') renderProjectionView();
+
+      // Renderizar gráficos y tablas
+      renderChartSourcesByPlace();
+      renderChartByTimeLayer();
+      renderScatterPlot();
+      renderChartIntensityByMoment();
+      renderSummaryTable();
+      renderFullRecordsTable();
+    }
+
+    function selectPiece(pieceId, playAudio = false) {
+      selectedPieceId = pieceId;
+      const p = pieces.find(item => item.id === pieceId);
+      if (!p) return;
+      updateInspectorCard(p);
+
+      if (currentLabMode === '2d') render2DBoard();
+      else if (currentLabMode === '3d') render3DScene();
+      else if (currentLabMode === 'projection') renderProjectionView();
+
+      if (playAudio) playSelectedPieceTone();
+    }
+
+    function updateInspectorCard(p) {
+      const src = SOURCES_CONFIG[p.source];
+      const intCfg = INTENSITY_CONFIG[p.intensity];
+      const placeCfg = PLACES_CONFIG[p.place];
+      const timeCfg = TIME_LAYERS_CONFIG[p.timeLayer];
+      const momentCfg = MOMENTS_CONFIG[p.moment];
+
+      const agradabilidad = getAgradabilidadFromY(p.y);
+      const permanencia = p.permanencia ?? 65;
+
+      document.getElementById('inspPieceId').textContent = `#${p.id}`;
+      document.getElementById('inspPieceDot').style.backgroundColor = src.hex;
+      document.getElementById('inspPieceMeta').textContent = `${placeCfg.name} • Capa ${timeCfg.label}`;
+      document.getElementById('inspPieceTitle').textContent = p.note;
+      document.getElementById('inspPieceSource').textContent = src.label;
+      document.getElementById('inspPieceIntensity').textContent = intCfg.label;
+      document.getElementById('inspPieceZone').textContent = momentCfg.label;
+      document.getElementById('inspPieceTime').textContent = `${timeCfg.label} (${timeCfg.hours})`;
+
+      const agEl = document.getElementById('inspPieceAgradabilidad');
+      agEl.textContent = `${agradabilidad >= 50 ? '😊 ' + agradabilidad + '% Agradable' : '☹️ ' + agradabilidad + '% Molesto'}`;
+      agEl.className = `font-bold ${agradabilidad >= 50 ? 'text-emerald-700' : 'text-rose-600'}`;
+
+      const permEl = document.getElementById('inspPiecePermanencia');
+      permEl.textContent = `${permanencia}% (${permanencia >= 50 ? 'Invita a quedarse' : 'Invita a irse'})`;
+    }
+
+    // 10. MODO AUTOR PROTEGIDO CON CLAVE (`grupo2`)
+    function handleAuthorModeButtonClick() {
+      if (isAuthorUnlocked) {
+        setAuthorModeState(false);
+        showToast('Modo Lectura activado (Datos protegidos)');
+      } else {
+        document.getElementById('authorPinInput').value = '';
+        document.getElementById('authorPinError').classList.add('hidden');
+        document.getElementById('authorAuthModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('authorPinInput').focus(), 80);
+      }
+    }
+
+    function closeAuthorModal() {
+      document.getElementById('authorAuthModal').classList.add('hidden');
+    }
+
+    function verifyAuthorPin() {
+      const pin = document.getElementById('authorPinInput').value.trim().toLowerCase();
+      if (pin === 'grupo2' || pin === 'ead2026' || pin === 'matias') {
+        closeAuthorModal();
+        setAuthorModeState(true);
+        showToast('Modo Autor activado • Edición habilitada');
+      } else {
+        document.getElementById('authorPinError').classList.remove('hidden');
+      }
+    }
+
+    function setAuthorModeState(unlocked) {
+      isAuthorUnlocked = unlocked;
+      const btn = document.getElementById('authorModeToggleBtn');
+      const icon = document.getElementById('authorLockIcon');
+      const text = document.getElementById('authorModeText');
+      const creatorPanel = document.getElementById('authorCreatorPanel');
+      const deleteBtn = document.getElementById('btnDeletePieceAuthor');
+      const tableBadge = document.getElementById('tableEditStatusBadge');
+      const actionHeader = document.getElementById('authorActionHeader');
+      const board = document.getElementById('acrylicBoard');
+
+      if (unlocked) {
+        btn.className = 'px-3.5 py-1.5 rounded-full bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-[0.12em] flex items-center gap-1.5 transition shadow-sm';
+        icon.className = 'ph-bold ph-lock-key-open text-xs';
+        text.textContent = 'Modo Autor (Salir)';
+        creatorPanel.classList.remove('hidden');
+        deleteBtn.classList.remove('hidden');
+        deleteBtn.classList.add('inline-flex');
+        board.classList.add('cursor-crosshair');
+        tableBadge.className = 'px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold uppercase tracking-wider';
+        tableBadge.textContent = '🔓 Edición Habilitada para el Autor';
+        actionHeader.classList.remove('hidden');
+      } else {
+        btn.className = 'px-3.5 py-1.5 rounded-full border border-slate-200 hover:border-slate-900 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition';
+        icon.className = 'ph-bold ph-lock-key text-xs';
+        text.textContent = 'Modo Lectura';
+        creatorPanel.classList.add('hidden');
+        deleteBtn.classList.add('hidden');
+        board.classList.remove('cursor-crosshair');
+        tableBadge.className = 'px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider';
+        tableBadge.textContent = '🔒 Solo Lectura (Protegido)';
+        actionHeader.classList.add('hidden');
+      }
+
+      updateAllViews();
+    }
+
+    // 11. CREACIÓN, ARRASTRE Y EDICIÓN DE DATOS (SOLO EN MODO AUTOR)
+    function handleBoardSurfaceClick(event) {
+      if (!isAuthorUnlocked || draggingPieceId) return;
+
+      const board = document.getElementById('acrylicBoard');
+      const rect = board.getBoundingClientRect();
+      const xPct = Math.max(8, Math.min(92, ((event.clientX - rect.left) / rect.width) * 100));
+      const yPct = Math.max(14, Math.min(86, ((event.clientY - rect.top) / rect.height) * 100));
+
+      let clickedMoment = 'interaccion';
+      if (xPct < 33.3) clickedMoment = 'reposo';
+      else if (xPct < 66.6) clickedMoment = 'transito';
+
+      const mCfg = MOMENTS_CONFIG[clickedMoment];
+      const relPerm = Math.round(((xPct - mCfg.minX) / (mCfg.maxX - mCfg.minX)) * 80 + 10);
+      const permanencia = Math.max(10, Math.min(95, relPerm));
+
+      const targetPlace = currentPlaceFilter !== 'ALL' ? currentPlaceFilter : document.getElementById('formPlace').value;
+      const targetTime  = currentTimeFilter !== 'ALL' ? currentTimeFilter : document.getElementById('formTimeLayer').value;
+
+      insertPieceRecord(targetPlace, targetTime, clickedMoment, xPct, yPct, permanencia);
+    }
+
+    function addPieceFromAuthorPanel() {
+      if (!isAuthorUnlocked) return;
+      const place = document.getElementById('formPlace').value;
+      const timeLayer = document.getElementById('formTimeLayer').value;
+      const moment = document.getElementById('formMoment').value;
+      const agradabilidad = Math.max(10, Math.min(92, Number(document.getElementById('formAgradabilidad').value) || 75));
+      const permanencia = Math.max(10, Math.min(92, Number(document.getElementById('formPermanencia').value) || 70));
+
+      const mCfg = MOMENTS_CONFIG[moment];
+      const xPct = mCfg.minX + ((permanencia / 100) * (mCfg.maxX - mCfg.minX));
+      const yPct = 100 - agradabilidad;
+
+      insertPieceRecord(place, timeLayer, moment, xPct, yPct, permanencia);
+    }
+
+    function insertPieceRecord(place, timeLayer, moment, xPct, yPct, permanencia) {
+      const noteInput = document.getElementById('formNote');
+      const customNote = noteInput ? noteInput.value.trim() : '';
+      const defaultNote = `${SOURCES_CONFIG[activeSource].label} (${INTENSITY_CONFIG[activeIntensity].short}) en ${PLACES_CONFIG[place].name} durante la ${TIME_LAYERS_CONFIG[timeLayer].label}`;
+
+      const nextNum = pieces.length + 1;
+      const newId = `P-${String(nextNum).padStart(2, '0')}`;
+
+      const newPiece = {
+        id: newId,
+        place,
+        timeLayer,
+        moment,
+        source: activeSource,
+        intensity: activeIntensity,
+        x: Number(xPct.toFixed(1)),
+        y: Number(yPct.toFixed(1)),
+        permanencia: Math.round(permanencia),
+        note: customNote || defaultNote
+      };
+
+      pieces.push(newPiece);
+      if (noteInput) noteInput.value = '';
+      savePiecesToStorage();
+      selectPiece(newId, true);
+      updateAllViews();
+      showToast(`Medición ${newId} agregada`);
+    }
+
+    function startDragPiece(e, pieceId) {
+      if (!isAuthorUnlocked) return;
+      e.stopPropagation();
+      draggingPieceId = pieceId;
+      selectPiece(pieceId, false);
+
+      const board = document.getElementById('acrylicBoard');
+
+      function onMove(moveEvent) {
+        if (!draggingPieceId) return;
+        const clientX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+        const clientY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+        const rect = board.getBoundingClientRect();
+
+        const xPct = Math.max(8, Math.min(92, ((clientX - rect.left) / rect.width) * 100));
+        const yPct = Math.max(12, Math.min(86, ((clientY - rect.top) / rect.height) * 100));
+
+        const p = pieces.find(item => item.id === draggingPieceId);
+        if (p) {
+          p.x = Number(xPct.toFixed(1));
+          p.y = Number(yPct.toFixed(1));
+          if (xPct < 33.3) p.moment = 'reposo';
+          else if (xPct < 66.6) p.moment = 'transito';
+          else p.moment = 'interaccion';
+
+          const mCfg = MOMENTS_CONFIG[p.moment];
+          p.permanencia = Math.max(8, Math.min(96, Math.round(((xPct - mCfg.minX) / (mCfg.maxX - mCfg.minX)) * 88 + 8)));
+
+          render2DBoard();
+          updateInspectorCard(p);
+        }
+      }
+
+      function onEnd() {
+        draggingPieceId = null;
+        savePiecesToStorage();
+        updateAllViews();
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onEnd);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onEnd);
+      }
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onEnd);
+    }
+
+    function deletePieceById(id) {
+      if (!isAuthorUnlocked || pieces.length <= 1) return;
+      pieces = pieces.filter(p => p.id !== id);
+      selectedPieceId = pieces[pieces.length - 1].id;
+      savePiecesToStorage();
+      selectPiece(selectedPieceId, false);
+      updateAllViews();
+      showToast(`Registro ${id} eliminado`);
+    }
+
+    function deleteSelectedPiece() {
+      deletePieceById(selectedPieceId);
+    }
+
+    function resetBoardToFieldData() {
+      if (!isAuthorUnlocked) return;
+      pieces = JSON.parse(JSON.stringify(INITIAL_PIECES));
+      savePiecesToStorage();
+      setPlaceFilter('ALL');
+      setTimeLayerFilter('ALL');
+      setSourceFilter('ALL');
+      selectPiece('P-01', false);
+      updateAllViews();
+      showToast('Base de datos original restaurada');
+    }
+
+    function copyUpdatedJSONToClipboard() {
+      const jsonStr = JSON.stringify(pieces, null, 2);
+      const textarea = document.createElement('textarea');
+      textarea.value = jsonStr;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('JSON copiado al portapapeles');
+    }
+
+    // 12. GRÁFICOS Y TABLAS ESTADÍSTICAS
+    function renderChartSourcesByPlace() {
+      const container = document.getElementById('chartSourcesByPlace');
+      if (!container) return;
+      container.innerHTML = '';
+
+      Object.keys(PLACES_CONFIG).forEach(placeKey => {
+        const pool = pieces.filter(p => p.place === placeKey && (currentTimeFilter === 'ALL' || p.timeLayer === currentTimeFilter));
+        const total = pool.length || 1;
+
+        const pct = {
+          transito:   Math.round((pool.filter(p => p.source === 'transito').length / total) * 100),
+          maquinaria: Math.round((pool.filter(p => p.source === 'maquinaria').length / total) * 100),
+          personas:   Math.round((pool.filter(p => p.source === 'personas').length / total) * 100),
+          naturaleza: Math.round((pool.filter(p => p.source === 'naturaleza').length / total) * 100)
+        };
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1.5';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wide text-slate-900">${PLACES_CONFIG[placeKey].name}</span>
+            <span class="font-mono text-[11px] text-slate-400">${pool.length} fichas</span>
+          </div>
+          <div class="w-full h-6 rounded-full bg-slate-100 overflow-hidden flex p-0.5 gap-0.5">
+            ${pct.transito > 0 ? `<div style="width:${pct.transito}%" class="h-full bg-[#0095D9] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.transito >= 12 ? pct.transito + '%' : ''}</div>` : ''}
+            ${pct.maquinaria > 0 ? `<div style="width:${pct.maquinaria}%" class="h-full bg-[#D91E36] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.maquinaria >= 12 ? pct.maquinaria + '%' : ''}</div>` : ''}
+            ${pct.personas > 0 ? `<div style="width:${pct.personas}%" class="h-full bg-[#F2D024] rounded-full flex items-center justify-center text-[10px] font-bold text-slate-900">${pct.personas >= 12 ? pct.personas + '%' : ''}</div>` : ''}
+            ${pct.naturaleza > 0 ? `<div style="width:${pct.naturaleza}%" class="h-full bg-[#5BB381] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.naturaleza >= 12 ? pct.naturaleza + '%' : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderChartByTimeLayer() {
+      const container = document.getElementById('chartByTimeLayer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      Object.keys(TIME_LAYERS_CONFIG).forEach(tk => {
+        const pool = pieces.filter(p => p.timeLayer === tk && (currentPlaceFilter === 'ALL' || p.place === currentPlaceFilter));
+        const total = pool.length || 1;
+
+        const pct = {
+          transito:   Math.round((pool.filter(p => p.source === 'transito').length / total) * 100),
+          maquinaria: Math.round((pool.filter(p => p.source === 'maquinaria').length / total) * 100),
+          personas:   Math.round((pool.filter(p => p.source === 'personas').length / total) * 100),
+          naturaleza: Math.round((pool.filter(p => p.source === 'naturaleza').length / total) * 100)
+        };
+
+        const avgAg = pool.length
+          ? Math.round(pool.reduce((acc, item) => acc + getAgradabilidadFromY(item.y), 0) / pool.length)
+          : 0;
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1.5';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold uppercase tracking-wide text-slate-900">Capa ${TIME_LAYERS_CONFIG[tk].label}</span>
+              <span class="font-mono text-[10px] text-slate-400 ml-1">(${TIME_LAYERS_CONFIG[tk].hours})</span>
+            </div>
+            <span class="text-slate-500 text-[11px]">Agradabilidad: <strong class="font-mono text-slate-900">${avgAg}%</strong></span>
+          </div>
+          <div class="w-full h-6 rounded-full bg-slate-100 overflow-hidden flex p-0.5 gap-0.5">
+            ${pct.transito > 0 ? `<div style="width:${pct.transito}%" class="h-full bg-[#0095D9] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.transito >= 12 ? pct.transito + '%' : ''}</div>` : ''}
+            ${pct.maquinaria > 0 ? `<div style="width:${pct.maquinaria}%" class="h-full bg-[#D91E36] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.maquinaria >= 12 ? pct.maquinaria + '%' : ''}</div>` : ''}
+            ${pct.personas > 0 ? `<div style="width:${pct.personas}%" class="h-full bg-[#F2D024] rounded-full flex items-center justify-center text-[10px] font-bold text-slate-900">${pct.personas >= 12 ? pct.personas + '%' : ''}</div>` : ''}
+            ${pct.naturaleza > 0 ? `<div style="width:${pct.naturaleza}%" class="h-full bg-[#5BB381] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${pct.naturaleza >= 12 ? pct.naturaleza + '%' : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderScatterPlot() {
+      const svg = document.getElementById('scatterSvg');
+      if (!svg) return;
+
+      const padL = 44, padR = 20, padT = 16, padB = 34;
+      const w = 520 - padL - padR;
+      const h = 290 - padT - padB;
+
+      let html = `
+        <line x1="${padL}" y1="${padT + h / 2}" x2="${padL + w}" y2="${padT + h / 2}" stroke="#CBD5E1" stroke-dasharray="4 4" stroke-width="1.2" />
+        <line x1="${padL + w / 2}" y1="${padT}" x2="${padL + w / 2}" y2="${padT + h}" stroke="#CBD5E1" stroke-dasharray="4 4" stroke-width="1.2" />
+
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + h}" stroke="#94A3B8" stroke-width="1.5" />
+        <line x1="${padL}" y1="${padT + h}" x2="${padL + w}" y2="${padT + h}" stroke="#94A3B8" stroke-width="1.5" />
+
+        <text x="${padL + w / 2}" y="282" text-anchor="middle" fill="#64748B" font-size="10" font-weight="700">EJE X • PERMANENCIA (← Invita a irse | Invita a quedarse →)</text>
+        <text x="14" y="${padT + h / 2}" text-anchor="middle" fill="#64748B" font-size="10" font-weight="700" transform="rotate(-90 14 ${padT + h / 2})">EJE Y • AGRADABILIDAD (☹️ ↔ 😊)</text>
+      `;
+
+      const activePool = getFilteredPieces();
+
+      activePool.forEach(p => {
+        const agradabilidad = getAgradabilidadFromY(p.y);
+        const permanencia = p.permanencia ?? 60;
+        const cx = padL + (permanencia / 100) * w;
+        const cy = padT + ((100 - agradabilidad) / 100) * h;
+        const r = p.intensity === 'alta' ? 13 : (p.intensity === 'media' ? 9.5 : 6);
+        const color = SOURCES_CONFIG[p.source].hex;
+
+        html += `
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" fill-opacity="0.78" stroke="#0F172A" stroke-opacity="0.25" stroke-width="1.2" class="cursor-pointer hover:stroke-slate-900" onclick="selectPiece('${p.id}', true)">
+            <title>${p.id} (${PLACES_CONFIG[p.place].name} - ${TIME_LAYERS_CONFIG[p.timeLayer].label}): Agradabilidad ${agradabilidad}%, Permanencia ${permanencia}%</title>
+          </circle>
+        `;
+      });
+
+      svg.innerHTML = html;
+    }
+
+    function renderChartIntensityByMoment() {
+      const container = document.getElementById('chartIntensityByMoment');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const activePool = getFilteredPieces();
+
+      Object.keys(MOMENTS_CONFIG).forEach(mKey => {
+        const mPieces = activePool.filter(p => p.moment === mKey);
+        const total = mPieces.length || 1;
+        const alta  = Math.round((mPieces.filter(p => p.intensity === 'alta').length / total) * 100);
+        const media = Math.round((mPieces.filter(p => p.intensity === 'media').length / total) * 100);
+        const baja  = Math.round((mPieces.filter(p => p.intensity === 'baja').length / total) * 100);
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1.5';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wide text-slate-900">Columna: ${MOMENTS_CONFIG[mKey].label}</span>
+            <span class="font-mono text-[11px] text-slate-400">${mPieces.length} registros</span>
+          </div>
+          <div class="w-full h-6 rounded-full bg-slate-100 overflow-hidden flex p-0.5 gap-0.5">
+            ${alta > 0 ? `<div style="width:${alta}%" class="h-full bg-[#1D2A62] rounded-full flex items-center justify-center text-[10px] font-bold text-white">${alta >= 15 ? 'Alta ' + alta + '%' : ''}</div>` : ''}
+            ${media > 0 ? `<div style="width:${media}%" class="h-full bg-[#1D2A62]/65 rounded-full flex items-center justify-center text-[10px] font-bold text-white">${media >= 15 ? 'Media ' + media + '%' : ''}</div>` : ''}
+            ${baja > 0 ? `<div style="width:${baja}%" class="h-full bg-[#1D2A62]/35 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-900">${baja >= 15 ? 'Baja ' + baja + '%' : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderSummaryTable() {
+      const tbody = document.getElementById('summaryTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      Object.keys(PLACES_CONFIG).forEach(placeKey => {
+        Object.keys(TIME_LAYERS_CONFIG).forEach(timeKey => {
+          const subset = pieces.filter(p => p.place === placeKey && p.timeLayer === timeKey);
+          if (subset.length === 0) return;
+
+          let domSource = 'transito', maxS = -1;
+          Object.keys(SOURCES_CONFIG).forEach(sk => {
+            const c = subset.filter(p => p.source === sk).length;
+            if (c > maxS) { maxS = c; domSource = sk; }
+          });
+
+          let domInt = 'media', maxI = -1;
+          ['alta', 'media', 'baja'].forEach(ik => {
+            const c = subset.filter(p => p.intensity === ik).length;
+            if (c > maxI) { maxI = c; domInt = ik; }
+          });
+
+          const avgAg = Math.round(subset.reduce((acc, p) => acc + getAgradabilidadFromY(p.y), 0) / subset.length);
+          const avgPerm = Math.round(subset.reduce((acc, p) => acc + (p.permanencia ?? 60), 0) / subset.length);
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50/80 transition';
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-bold text-slate-900">${PLACES_CONFIG[placeKey].name}</td>
+            <td class="py-3 px-4 font-medium text-slate-600">${TIME_LAYERS_CONFIG[timeKey].label}</td>
+            <td class="py-3 px-4 font-mono text-slate-500">${subset.length}</td>
+            <td class="py-3 px-4">
+              <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800">
+                <span class="w-2.5 h-2.5 rounded-full" style="background:${SOURCES_CONFIG[domSource].hex}"></span>
+                ${SOURCES_CONFIG[domSource].label}
+              </span>
+            </td>
+            <td class="py-3 px-4 font-semibold text-slate-700">${INTENSITY_CONFIG[domInt].short}</td>
+            <td class="py-3 px-4 font-mono font-bold ${avgAg >= 50 ? 'text-emerald-700' : 'text-rose-600'}">${avgAg}% ${avgAg >= 50 ? '😊' : '☹️'}</td>
+            <td class="py-3 px-4 font-mono font-bold text-slate-800">${avgPerm}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function renderFullRecordsTable() {
+      const tbody = document.getElementById('fullRecordsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      pieces.forEach(p => {
+        const agradabilidad = getAgradabilidadFromY(p.y);
+        const permanencia = p.permanencia ?? 65;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/90 transition';
+
+        if (!isAuthorUnlocked) {
+          tr.innerHTML = `
+            <td class="py-2.5 px-4 font-mono font-bold text-slate-900">${p.id}</td>
+            <td class="py-2.5 px-4 font-medium">${PLACES_CONFIG[p.place].name}</td>
+            <td class="py-2.5 px-4">${TIME_LAYERS_CONFIG[p.timeLayer].label}</td>
+            <td class="py-2.5 px-4">${MOMENTS_CONFIG[p.moment].label}</td>
+            <td class="py-2.5 px-4">
+              <span class="inline-flex items-center gap-1.5 font-semibold">
+                <span class="w-2.5 h-2.5 rounded-full" style="background:${SOURCES_CONFIG[p.source].hex}"></span>
+                ${SOURCES_CONFIG[p.source].label}
+              </span>
+            </td>
+            <td class="py-2.5 px-4 font-semibold">${INTENSITY_CONFIG[p.intensity].short}</td>
+            <td class="py-2.5 px-4 font-mono font-bold ${agradabilidad >= 50 ? 'text-emerald-700' : 'text-rose-600'}">${agradabilidad}%</td>
+            <td class="py-2.5 px-4 font-mono font-bold text-slate-800">${permanencia}%</td>
+            <td class="py-2.5 px-4 text-slate-500 max-w-xs truncate" title="${p.note}">${p.note}</td>
+          `;
+        } else {
+          tr.innerHTML = `
+            <td class="py-2 px-4 font-mono font-bold text-slate-900">${p.id}</td>
+            <td class="py-2 px-4">
+              <select onchange="updateRecordField('${p.id}', 'place', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                <option value="muelle_prat" ${p.place==='muelle_prat'?'selected':''}>Muelle Prat</option>
+                <option value="plaza_sotomayor" ${p.place==='plaza_sotomayor'?'selected':''}>Plaza Sotomayor</option>
+                <option value="plaza_echaurren" ${p.place==='plaza_echaurren'?'selected':''}>Plaza Echaurren</option>
+              </select>
+            </td>
+            <td class="py-2 px-4">
+              <select onchange="updateRecordField('${p.id}', 'timeLayer', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                <option value="manana" ${p.timeLayer==='manana'?'selected':''}>Mañana</option>
+                <option value="mediodia" ${p.timeLayer==='mediodia'?'selected':''}>Mediodía</option>
+                <option value="tarde" ${p.timeLayer==='tarde'?'selected':''}>Tarde</option>
+              </select>
+            </td>
+            <td class="py-2 px-4">
+              <select onchange="updateRecordField('${p.id}', 'moment', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                <option value="reposo" ${p.moment==='reposo'?'selected':''}>Reposo</option>
+                <option value="transito" ${p.moment==='transito'?'selected':''}>Tránsito</option>
+                <option value="interaccion" ${p.moment==='interaccion'?'selected':''}>Interacción</option>
+              </select>
+            </td>
+            <td class="py-2 px-4">
+              <select onchange="updateRecordField('${p.id}', 'source', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                <option value="transito" ${p.source==='transito'?'selected':''}>Tránsito</option>
+                <option value="maquinaria" ${p.source==='maquinaria'?'selected':''}>Maquinaria</option>
+                <option value="personas" ${p.source==='personas'?'selected':''}>Personas</option>
+                <option value="naturaleza" ${p.source==='naturaleza'?'selected':''}>Naturaleza</option>
+              </select>
+            </td>
+            <td class="py-2 px-4">
+              <select onchange="updateRecordField('${p.id}', 'intensity', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                <option value="alta" ${p.intensity==='alta'?'selected':''}>Alta</option>
+                <option value="media" ${p.intensity==='media'?'selected':''}>Media</option>
+                <option value="baja" ${p.intensity==='baja'?'selected':''}>Baja</option>
+              </select>
+            </td>
+            <td class="py-2 px-4">
+              <input type="number" min="5" max="95" value="${agradabilidad}" onchange="updateRecordField('${p.id}', 'agradabilidad', this.value)" class="w-14 bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-xs font-mono font-bold" />%
+            </td>
+            <td class="py-2 px-4">
+              <input type="number" min="5" max="95" value="${permanencia}" onchange="updateRecordField('${p.id}', 'permanencia', this.value)" class="w-14 bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-xs font-mono font-bold" />%
+            </td>
+            <td class="py-2 px-4">
+              <input type="text" value="${p.note.replace(/"/g, '&quot;')}" onchange="updateRecordField('${p.id}', 'note', this.value)" class="w-44 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-xs" />
+            </td>
+            <td class="py-2 px-4 text-right">
+              <button onclick="deletePieceById('${p.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">Borrar</button>
+            </td>
+          `;
+        }
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateRecordField(pieceId, field, value) {
+      if (!isAuthorUnlocked) return;
+      const p = pieces.find(item => item.id === pieceId);
+      if (!p) return;
+
+      if (field === 'agradabilidad') {
+        const ag = Math.max(8, Math.min(92, Number(value)));
+        p.y = Number((100 - ag).toFixed(1));
+      } else if (field === 'permanencia') {
+        const perm = Math.max(8, Math.min(95, Number(value)));
+        p.permanencia = perm;
+        const mCfg = MOMENTS_CONFIG[p.moment];
+        p.x = Number((mCfg.minX + (perm / 100) * (mCfg.maxX - mCfg.minX)).toFixed(1));
+      } else if (field === 'moment') {
+        p.moment = value;
+        const mCfg = MOMENTS_CONFIG[value];
+        p.x = Number((mCfg.minX + ((p.permanencia ?? 65) / 100) * (mCfg.maxX - mCfg.minX)).toFixed(1));
+      } else {
+        p[field] = value;
+      }
+
+      savePiecesToStorage();
+      updateInspectorCard(p);
+      updateAllViews();
+      showToast(`Registro ${pieceId} actualizado`);
+    }
+
+    // 13. SÍNTESIS SONORA WEB AUDIO Y EXPORTACIÓN CSV
+    let audioCtx = null;
+    function playSelectedPieceTone() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const p = pieces.find(item => item.id === selectedPieceId);
+        if (!p) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const srcCfg = SOURCES_CONFIG[p.source];
+
+        osc.type = p.source === 'naturaleza' ? 'sine' : (p.source === 'personas' ? 'triangle' : 'sawtooth');
+        osc.frequency.setValueAtTime(srcCfg.freq, now);
+
+        const vol = p.intensity === 'alta' ? 0.08 : (p.intensity === 'media' ? 0.045 : 0.02);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      } catch (e) {}
+    }
+
+    function exportCSV() {
+      const headers = ['ID', 'Lugar', 'Capa_Horaria', 'Columna_Grabada', 'Fuente_Sonora', 'Intensidad', 'Agradabilidad_Y_Pct', 'Permanencia_X_Pct', 'Nota'];
+      const rows = pieces.map(p => [
+        p.id,
+        `"${PLACES_CONFIG[p.place].name}"`,
+        `"${TIME_LAYERS_CONFIG[p.timeLayer].label}"`,
+        `"${MOMENTS_CONFIG[p.moment].label}"`,
+        `"${SOURCES_CONFIG[p.source].label}"`,
+        `"${INTENSITY_CONFIG[p.intensity].short}"`,
+        getAgradabilidadFromY(p.y),
+        p.permanencia ?? 65,
+        `"${p.note.replace(/"/g, '""')}"`
+      ]);
+
+      const csv = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(csv));
+      link.setAttribute('download', 'percepcion_sonora_barrio_puerto_grupo2.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastNotification');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.add('hidden'), 2600);
+    }
+
+    window.addEventListener('resize', () => {
+      if (currentLabMode === '2d') render2DBoard();
+      else if (currentLabMode === '3d') apply3DTransformOnly();
+      else if (currentLabMode === 'projection') renderProjectionView();
+    });
+
+    window.onload = function () {
+      initHeroSoundAnimation();
+      init3DOrbitEvents();
+      selectPiece(selectedPieceId, false);
+      updateAllViews();
+    };
+  </script>
+</body>
+</html>
