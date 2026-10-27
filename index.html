@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Percepción Sonora — Barrio Puerto | Grupo 2 • e[ad] PUCV</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jost (Idéntica geométricamente a Futura como respaldo universal) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            futura: ['Futura', 'Futura PT', 'Futura Std', 'Jost', 'Century Gothic', 'sans-serif'],
+          },
+          colors: {
+            transito: '#0095D9',     /* Azul Cian real del artefacto */
+            maquinaria: '#D91E36',   /* Rojo Carmesí real del artefacto */
+            personas: '#F2D024',     /* Amarillo real del artefacto */
+            naturaleza: '#5BB381',   /* Verde Menta real del artefacto */
+            intensidad: '#1D2A62',   /* Azul Marino de los iconos de intensidad */
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --c-transito: #0095D9;
+      --c-maquinaria: #D91E36;
+      --c-personas: #F2D024;
+      --c-naturaleza: #5BB381;
+      --c-navy: #1D2A62;
+    }
+
+    body {
+      background-color: #FFFFFF;
+      color: #111827;
+      font-family: 'Futura', 'Futura PT', 'Futura Std', 'Jost', 'Century Gothic', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Retícula sutil de lámina de exposición sobre fondo blanco */
+    .bg-white-grid {
+      background-color: #FFFFFF;
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    }
+
+    /* Estructura física del Artefacto de Acrílico sobre mesa blanca */
+    .acrylic-header-plate {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.92) 100%);
+      border: 2px solid rgba(203, 213, 225, 0.85);
+      box-shadow: 
+        0 10px 25px -5px rgba(15, 23, 42, 0.06),
+        inset 0 1px 0 0 rgba(255, 255, 255, 1);
+    }
+
+    .acrylic-main-board {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(241, 245, 249, 0.55) 50%, rgba(255, 255, 255, 0.82) 100%);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 3px solid rgba(203, 213, 225, 0.9);
+      box-shadow: 
+        0 24px 48px -12px rgba(15, 23, 42, 0.12),
+        0 4px 12px rgba(15, 23, 42, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+        inset 0 12px 24px rgba(255, 255, 255, 0.6);
+      transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+      transform-style: preserve-3d;
+    }
+
+    /* Soportes / conectores de acrílico entre cabezal y tablero (como en la foto) */
+    .acrylic-hinge {
+      width: 68px;
+      height: 18px;
+      background: linear-gradient(90deg, rgba(226,232,240,0.7), rgba(255,255,255,0.95), rgba(226,232,240,0.7));
+      border: 1.5px solid rgba(148, 163, 184, 0.45);
+      box-shadow: 0 3px 6px rgba(15,23,42,0.08);
+    }
+
+    /* Pernos cilíndricos blancos/acrílicos en las 4 esquinas */
+    .acrylic-peg {
+      width: 20px;
+      height: 20px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e2e8f0 65%, #94a3b8 100%);
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 
+        2px 4px 8px rgba(15, 23, 42, 0.18),
+        inset 0 2px 3px rgba(255, 255, 255, 0.9);
+    }
+
+    /* Círculos de mica translúcida con mezcla sustractiva real (multiply sobre fondo blanco) */
+    .mica-piece {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 9999px;
+      cursor: grab;
+      mix-blend-mode: multiply;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.3s ease;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .mica-piece:active {
+      cursor: grabbing;
+    }
+
+    .mica-piece:hover,
+    .mica-piece.selected-mica {
+      transform: translate(-50%, -50%) scale(1.09);
+      z-index: 80 !important;
+      box-shadow: 0 0 0 3px #111827, 0 10px 20px rgba(15, 23, 42, 0.22);
+    }
+
+    /* Colores translúcidos fieles a las micas de la foto */
+    .mica-transito {
+      background-color: rgba(0, 149, 217, 0.78);
+      border: 1.5px solid rgba(0, 118, 176, 0.55);
+    }
+    .mica-maquinaria {
+      background-color: rgba(217, 30, 54, 0.78);
+      border: 1.5px solid rgba(175, 18, 39, 0.55);
+    }
+    .mica-personas {
+      background-color: rgba(242, 208, 36, 0.82);
+      border: 1.5px solid rgba(202, 168, 12, 0.55);
+    }
+    .mica-naturaleza {
+      background-color: rgba(91, 179, 129, 0.78);
+      border: 1.5px solid rgba(64, 145, 99, 0.55);
+    }
+
+    /* Modo 3D Isométrico para ver las 3 placas de los 3 lugares apiladas */
+    .stage-perspective {
+      perspective: 1800px;
+    }
+
+    .acrylic-main-board.isometric-view {
+      transform: rotateX(46deg) rotateZ(-18deg) scale(0.9);
+      box-shadow: 
+        -20px 30px 50px rgba(15, 23, 42, 0.18),
+        inset 0 0 20px rgba(255, 255, 255, 0.8);
+    }
+
+    .place-layer {
+      position: absolute;
+      inset: 0;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    .acrylic-main-board.isometric-view .place-layer {
+      border: 1.5px dashed rgba(148, 163, 184, 0.55);
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 12px;
+    }
+
+    /* Botones selectores de fuente e intensidad estilo cabezal */
+    .source-pill-btn {
+      transition: all 0.2s ease;
+    }
+    .source-pill-btn.active-pill {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.18);
+      ring: 3px solid #111827;
+    }
+  </style>
+</head>
+<body class="bg-white-grid font-futura text-slate-900 selection:bg-sky-500/20 selection:text-sky-900">
+
+  <!-- =====================================================================
+       BARRA DE NAVEGACIÓN SUPERIOR (FONDO BLANCO, FUTURA BOLD)
+       ===================================================================== -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0">
+          e[ad]
+        </div>
+        <div>
+          <div class="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-slate-500 font-semibold">
+            <span>Taller de Diseño de Servicios 2026</span>
+            <span>•</span>
+            <span>Grupo 2</span>
+          </div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 uppercase leading-none mt-0.5">
+            Percepción Sonora — Barrio Puerto
+          </h1>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+        <a href="#artefacto-interactivo" class="px-4 py-1.5 rounded-full bg-white text-slate-900 shadow-sm transition">
+          1. Artefacto & Medición
+        </a>
+        <a href="#lugares-momentos" class="px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition">
+          2. Los 3 Lugares × 3 Momentos
+        </a>
+        <a href="#estadisticas" class="px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition">
+          3. Datos Recopilados
+        </a>
+        <a href="#metodologia" class="px-4 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition">
+          4. Objeto & Equipo
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openPhotoReferenceModal()" class="px-3.5 py-2 rounded-full border border-slate-300 hover:border-slate-900 text-xs font-semibold uppercase tracking-wider text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition">
+          <i class="ph-bold ph-cube text-sm"></i>
+          <span class="hidden sm:inline">Guía del Objeto</span>
+        </button>
+        <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition">
+          <span>Wiki Casiopea</span>
+          <i class="ph-bold ph-arrow-up-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16">
+
+    <!-- =====================================================================
+         INTRODUCCIÓN EDITORIAL: LOS 3 LUGARES Y 3 MOMENTOS EN BARRIO PUERTO
+         ===================================================================== -->
+    <section class="space-y-8">
+      <div class="max-w-4xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold uppercase tracking-[0.15em] text-slate-600">
+          <span class="w-2 h-2 rounded-full bg-[#0095D9]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#D91E36]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#F2D024]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#5BB381]"></span>
+          <span>Recopilación de Información en Terreno • Barrio Puerto, Valparaíso</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 uppercase leading-[1.08]">
+          Medición Táctil de la Percepción Sonora en el Barrio Puerto
+        </h2>
+
+        <p class="text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+          A través de nuestro <strong>artefacto físico de acrílico y piezas circulares translúcidas</strong>, recopilamos la percepción acústica de las personas en <strong>3 lugares clave del Barrio Puerto</strong> (<em>Muelle Prat</em>, <em>Plaza Sotomayor</em> y <em>Plaza Echaurren</em>), evaluando cómo cambia la escucha en <strong>3 momentos cotidianos</strong>: <strong>Reposo</strong>, <strong>Tránsito</strong> e <strong>Interacción</strong>.
+        </p>
+      </div>
+
+      <!-- Resumen visual de las 3 dimensiones de consulta del artefacto -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Tarjeta 1: Los 3 Lugares -->
+        <div class="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">01 • Dónde Medimos</span>
+            <i class="ph-fill ph-map-pin text-xl text-slate-800"></i>
+          </div>
+          <h3 class="text-lg font-bold uppercase text-slate-900">3 Lugares del Barrio Puerto</h3>
+          <ul class="text-sm text-slate-600 space-y-1 pt-1">
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Muelle Prat:</strong> Borde abierto al mar y actividad marítima.</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Plaza Sotomayor:</strong> Explanada cívica de bordes duros.</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Plaza Echaurren:</strong> Claro histórico rodeado de muros.</li>
+          </ul>
+        </div>
+
+        <!-- Tarjeta 2: Los 3 Momentos -->
+        <div class="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">02 • En Qué Situación</span>
+            <i class="ph-fill ph-clock-countdown text-xl text-slate-800"></i>
+          </div>
+          <h3 class="text-lg font-bold uppercase text-slate-900">3 Momentos de Permanencia</h3>
+          <ul class="text-sm text-slate-600 space-y-1 pt-1">
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Reposo:</strong> Detenido, descansando o contemplando.</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Tránsito:</strong> Caminando o desplazándose por el lugar.</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span> <strong>Interacción:</strong> Conversando, comprando o en grupo.</li>
+          </ul>
+        </div>
+
+        <!-- Tarjeta 3: Fuente + Volumen -->
+        <div class="p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">03 • Respuesta en el Objeto</span>
+            <i class="ph-fill ph-circles-three-plus text-xl text-slate-800"></i>
+          </div>
+          <h3 class="text-lg font-bold uppercase text-slate-900">Color (Fuente) × Tamaño (Volumen)</h3>
+          <p class="text-sm text-slate-600 pt-1 leading-relaxed">
+            El participante elige <strong>1 de las 4 fuentes emisoras</strong> (<span class="text-[#0095D9] font-semibold">Tránsito</span>, <span class="text-[#D91E36] font-semibold">Maquinaria</span>, <span class="text-[#c7a608] font-semibold">Personas</span> o <span class="text-[#5BB381] font-semibold">Naturaleza</span>) y el <strong>tamaño de la pieza</strong> según su intensidad (<strong>Alta, Media o Baja</strong>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECCIÓN 1: RÉPLICA INTERACTIVA EXACTA DEL ARTEFACTO DE ACRÍLICO
+         ===================================================================== -->
+    <section id="artefacto-interactivo" class="scroll-mt-20 space-y-6">
+
+      <!-- Barra de Controles del Lugar Activo y Modo de Visualización -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        
+        <!-- Selector de los 3 Lugares del Barrio Puerto -->
+        <div class="space-y-1.5 w-full lg:w-auto">
+          <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 block">
+            Selecciona el Lugar de Medición en Barrio Puerto:
+          </span>
+          <div class="flex flex-wrap gap-2" id="placeFilterGroup">
+            <button onclick="setPlaceFilter('ALL')" data-place="ALL" class="place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-900 text-white shadow-sm transition">
+              Consolidado (3 Lugares)
+            </button>
+            <button onclick="setPlaceFilter('muelle_prat')" data-place="muelle_prat" class="place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-slate-900 transition">
+              1. Muelle Prat
+            </button>
+            <button onclick="setPlaceFilter('plaza_sotomayor')" data-place="plaza_sotomayor" class="place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-slate-900 transition">
+              2. Plaza Sotomayor
+            </button>
+            <button onclick="setPlaceFilter('plaza_echaurren')" data-place="plaza_echaurren" class="place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-slate-900 transition">
+              3. Plaza Echaurren
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtros rápidos de Fuente y Vista 2D / 3D -->
+        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
+          <div class="flex items-center gap-1.5 bg-white p-1 rounded-full border border-slate-200">
+            <button id="btnView2D" onclick="toggleIsometricView(false)" class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-900 text-white transition">
+              Vista Frontal (Foto)
+            </button>
+            <button id="btnView3D" onclick="toggleIsometricView(true)" class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 transition">
+              Capas 3D por Lugar
+            </button>
+          </div>
+
+          <button onclick="resetBoardToFieldData()" class="px-3.5 py-2 rounded-full bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold uppercase tracking-wider text-slate-700 transition" title="Restaurar piezas del levantamiento original">
+            <i class="ph-bold ph-arrow-counter-clockwise"></i> Restaurar Muestra
+          </button>
+        </div>
+      </div>
+
+      <!-- =================================================================
+           EL ARTEFACTO FÍSICO (FIEL A LA FOTOGRAFÍA DE REFERENCIA)
+           ================================================================= -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+        <!-- COLUMNA PRINCIPAL (9 COLS): MAQUETA REALISTA DEL OBJETO DE ACRÍLICO -->
+        <div class="xl:col-span-9 space-y-0">
+
+          <!-- 1. CABEZAL SUPERIOR DEL ARTEFACTO (PLACA BLANCA CON INSTRUCCIONES E ICONOS) -->
+          <div class="acrylic-header-plate rounded-2xl p-5 sm:p-7 mx-auto max-w-5xl relative z-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+              <!-- Bloque Izquierdo: PERCEPCIÓN SONORA + 4 viñetas de instrucciones -->
+              <div class="lg:col-span-4 space-y-2.5 border-b lg:border-b-0 lg:border-r border-slate-200 pb-4 lg:pb-0 lg:pr-4">
+                <h3 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 leading-none">
+                  PERCEPCIÓN<br/>SONORA
+                </h3>
+                <p class="text-xs font-semibold text-slate-800 pt-1">
+                  Detente un momento y escucha tu entorno:
+                </p>
+                <ul class="text-[11px] sm:text-xs text-slate-700 space-y-1 font-medium leading-snug">
+                  <li>• Identifica dos sonidos o más</li>
+                  <li>• Elige el color según la fuente emisora del sonido</li>
+                  <li>• Asigna el tamaño de la pieza según su intensidad</li>
+                  <li>• Toma las piezas necesarias y ubícalas en el tablero</li>
+                </ul>
+              </div>
+
+              <!-- Bloque Central: ¿Cuál es el origen o la fuente emisora del sonido? (4 Círculos Interactivos) -->
+              <div class="lg:col-span-5 space-y-3 text-center">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-900">
+                  ¿Cuál es el origen o la fuente emisora del sonido?
+                </h4>
+                <div class="grid grid-cols-4 gap-2 sm:gap-3 pt-1">
+                  
+                  <!-- Opción 1: Tránsito (Azul Cian) -->
+                  <button type="button" onclick="selectActiveSource('transito')" id="headerSource-transito" class="source-pill-btn active-pill group flex flex-col items-center gap-1.5 p-1.5 rounded-xl">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0095D9] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                      <i class="ph-fill ph-car text-2xl sm:text-3xl"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Tránsito</span>
+                  </button>
+
+                  <!-- Opción 2: Maquinaria Portuaria (Rojo Carmesí) -->
+                  <button type="button" onclick="selectActiveSource('maquinaria')" id="headerSource-maquinaria" class="source-pill-btn group flex flex-col items-center gap-1.5 p-1.5 rounded-xl">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#D91E36] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                      <i class="ph-bold ph-anchor text-2xl sm:text-3xl"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Maquinaria<br/>Portuaria</span>
+                  </button>
+
+                  <!-- Opción 3: Personas (Amarillo) -->
+                  <button type="button" onclick="selectActiveSource('personas')" id="headerSource-personas" class="source-pill-btn group flex flex-col items-center gap-1.5 p-1.5 rounded-xl">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#F2D024] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                      <i class="ph-bold ph-user-sound text-2xl sm:text-3xl drop-shadow-sm"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Personas</span>
+                  </button>
+
+                  <!-- Opción 4: Naturaleza (Verde Menta) -->
+                  <button type="button" onclick="selectActiveSource('naturaleza')" id="headerSource-naturaleza" class="source-pill-btn group flex flex-col items-center gap-1.5 p-1.5 rounded-xl">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#5BB381] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                      <i class="ph-fill ph-bird text-2xl sm:text-3xl"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Naturaleza</span>
+                  </button>
+
+                </div>
+              </div>
+
+              <!-- Bloque Derecho: ¿Con qué intensidad se manifestó el sonido? (Alta, Media, Baja) -->
+              <div class="lg:col-span-3 space-y-3 text-center border-t lg:border-t-0 lg:border-l border-slate-200 pt-4 lg:pt-0 lg:pl-4">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-900">
+                  ¿Con qué intensidad se manifestó el sonido?
+                </h4>
+                <div class="flex items-end justify-center gap-4 sm:gap-5 pt-1">
+                  
+                  <!-- Intensidad ALTA (Círculo Grande) -->
+                  <button type="button" onclick="selectActiveIntensity('alta')" id="headerInt-alta" class="group flex flex-col items-center gap-1.5">
+                    <div class="w-14 h-14 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                      <i class="ph-fill ph-speaker-high text-2xl"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800">Alta</span>
+                  </button>
+
+                  <!-- Intensidad MEDIA (Círculo Mediano) -->
+                  <button type="button" onclick="selectActiveIntensity('media')" id="headerInt-media" class="group flex flex-col items-center gap-1.5">
+                    <div class="w-11 h-11 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition opacity-80">
+                      <i class="ph-fill ph-speaker-low text-lg"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800">Media</span>
+                  </button>
+
+                  <!-- Intensidad BAJA (Círculo Pequeño) -->
+                  <button type="button" onclick="selectActiveIntensity('baja')" id="headerInt-baja" class="group flex flex-col items-center gap-1.5">
+                    <div class="w-8 h-8 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition opacity-70">
+                      <i class="ph-fill ph-speaker-none text-sm"></i>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-800">Baja</span>
+                  </button>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3 Soportes / Conectores de Acrílico entre cabezal y tablero (como en la foto) -->
+          <div class="max-w-4xl mx-auto px-12 flex justify-between items-center -my-1 relative z-10 pointer-events-none">
+            <div class="acrylic-hinge rounded-sm"></div>
+            <div class="acrylic-hinge rounded-sm"></div>
+            <div class="acrylic-hinge rounded-sm"></div>
+          </div>
+
+          <!-- 2. TABLERO TRANSPARENTE PRINCIPAL (PERMANENCIA: REPOSO | TRÁNSITO | INTERACCIÓN) -->
+          <div class="stage-perspective">
+            <div id="acrylicBoard" onclick="handleBoardSurfaceClick(event)" class="acrylic-main-board rounded-2xl w-full aspect-[16/9] min-h-[380px] sm:min-h-[460px] cursor-crosshair select-none overflow-hidden">
+
+              <!-- 4 Pernos blancos cilíndricos en las esquinas (como en el objeto físico) -->
+              <div class="acrylic-peg absolute top-3.5 left-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute top-3.5 right-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-3.5 left-3.5 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-3.5 right-3.5 z-40 pointer-events-none"></div>
+
+              <!-- Título superior central del tablero: "Permanencia" -->
+              <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none text-center">
+                <span class="text-sm sm:text-base font-bold text-slate-800 tracking-wide">Permanencia</span>
+              </div>
+
+              <!-- Eje Vertical Izquierdo: Cara Feliz (Arriba) y Cara Triste (Abajo) tal como en la foto -->
+              <div class="absolute left-6 sm:left-8 top-12 bottom-12 w-8 z-30 flex flex-col items-center justify-between pointer-events-none">
+                <!-- Icono Cara Feliz (Agrado / Confort sonoro) -->
+                <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-sm" title="Percepción Agradable / Armónica">
+                  <i class="ph-fill ph-smiley text-xl"></i>
+                </div>
+                <!-- Línea guía vertical sutil -->
+                <div class="w-px flex-1 bg-gradient-to-b from-slate-300 via-slate-200 to-slate-300 my-2"></div>
+                <!-- Icono Cara Triste (Molestia / Saturación) -->
+                <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-sm" title="Percepción Incómoda / Saturada">
+                  <i class="ph-fill ph-smiley-sad text-xl"></i>
+                </div>
+              </div>
+
+              <!-- 3 Columnas interiores de los Momentos: REPOSO | TRÁNSITO | INTERACCIÓN -->
+              <div class="absolute inset-0 grid grid-cols-3 pointer-events-none z-10">
+                <!-- Columna 1: Reposo -->
+                <div class="border-r border-slate-300/60 flex flex-col justify-end items-center pb-4 sm:pb-5">
+                  <span class="text-sm sm:text-base font-bold text-slate-800 tracking-wide bg-white/70 px-3 py-0.5 rounded-full">
+                    Reposo
+                  </span>
+                </div>
+                <!-- Columna 2: Tránsito -->
+                <div class="border-r border-slate-300/60 flex flex-col justify-end items-center pb-4 sm:pb-5">
+                  <span class="text-sm sm:text-base font-bold text-slate-800 tracking-wide bg-white/70 px-3 py-0.5 rounded-full">
+                    Tránsito
+                  </span>
+                </div>
+                <!-- Columna 3: Interacción -->
+                <div class="flex flex-col justify-end items-center pb-4 sm:pb-5">
+                  <span class="text-sm sm:text-base font-bold text-slate-800 tracking-wide bg-white/70 px-3 py-0.5 rounded-full">
+                    Interacción
+                  </span>
+                </div>
+              </div>
+
+              <!-- 3 CAPAS DE LUGAR (Para ver juntas o separadas en 3D) -->
+              <div id="layer-muelle_prat" class="place-layer z-20">
+                <span class="layer-badge hidden absolute top-3 right-12 bg-white/90 border border-slate-300 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase text-slate-700 shadow-sm">
+                  Placa 1: Muelle Prat
+                </span>
+              </div>
+              <div id="layer-plaza_sotomayor" class="place-layer z-20">
+                <span class="layer-badge hidden absolute top-3 right-12 bg-white/90 border border-slate-300 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase text-slate-700 shadow-sm">
+                  Placa 2: Plaza Sotomayor
+                </span>
+              </div>
+              <div id="layer-plaza_echaurren" class="place-layer z-20">
+                <span class="layer-badge hidden absolute top-3 right-12 bg-white/90 border border-slate-300 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase text-slate-700 shadow-sm">
+                  Placa 3: Plaza Echaurren
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Soportes inferiores de la base de acrílico (como en la foto) -->
+          <div class="max-w-4xl mx-auto px-12 flex justify-between items-center -mt-1 relative z-10 pointer-events-none">
+            <div class="acrylic-hinge rounded-sm h-4"></div>
+            <div class="acrylic-hinge rounded-sm h-4"></div>
+            <div class="acrylic-hinge rounded-sm h-4"></div>
+          </div>
+
+          <!-- Nota rápida de uso debajo del tablero -->
+          <div class="pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+            <span class="flex items-center gap-1.5 font-medium">
+              <i class="ph-fill ph-hand-pointing text-slate-900 text-base"></i>
+              <strong>Interactivo:</strong> Elige el color y tamaño arriba y <strong>haz clic en cualquier parte del tablero</strong> (o arrastra las piezas) para posicionar tu sonido.
+            </span>
+            <span id="visiblePiecesCount" class="font-bold text-slate-800">24 piezas en el tablero</span>
+          </div>
+        </div>
+
+        <!-- COLUMNA LATERAL DERECHA (3 COLS): ASISTENTE DE ENCUESTA E INSPECTOR DE PIEZA -->
+        <div class="xl:col-span-3 space-y-5">
+
+          <!-- PANEL 1: COLOCAR NUEVA PIEZA EN EL ARTEFACTO -->
+          <div class="p-5 rounded-2xl bg-white border-2 border-slate-900 shadow-md space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Encuesta Participativa</span>
+                <h3 class="text-base font-bold uppercase text-slate-900">Agregar Pieza al Tablero</h3>
+              </div>
+              <div id="previewMicaCircle" class="w-10 h-10 rounded-full bg-[#0095D9]/80 border border-slate-900/20 flex items-center justify-center text-white text-xs font-bold shadow-inner">
+                Alta
+              </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <!-- Selección de Lugar -->
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  1. Lugar en Barrio Puerto:
+                </label>
+                <select id="formPlace" class="w-full rounded-xl bg-slate-50 border border-slate-300 px-3 py-2 font-semibold text-slate-900 focus:outline-none focus:border-slate-900">
+                  <option value="muelle_prat">1. Muelle Prat</option>
+                  <option value="plaza_sotomayor">2. Plaza Sotomayor</option>
+                  <option value="plaza_echaurren">3. Plaza Echaurren</option>
+                </select>
+              </div>
+
+              <!-- Selección de Momento -->
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  2. Momento de Medición:
+                </label>
+                <div class="grid grid-cols-3 gap-1.5">
+                  <button type="button" onclick="setFormMoment('reposo')" id="momentBtn-reposo" class="py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition">
+                    Reposo
+                  </button>
+                  <button type="button" onclick="setFormMoment('transito')" id="momentBtn-transito" class="py-2 rounded-lg border-2 border-slate-900 bg-slate-900 text-white font-bold transition">
+                    Tránsito
+                  </button>
+                  <button type="button" onclick="setFormMoment('interaccion')" id="momentBtn-interaccion" class="py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition">
+                    Interacción
+                  </button>
+                </div>
+              </div>
+
+              <!-- Selección de Fuente Sonora (4 colores) -->
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  3. Origen de la Fuente Sonora:
+                </label>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <button type="button" onclick="selectActiveSource('transito')" id="sideSource-transito" class="p-2 rounded-lg border-2 border-slate-900 bg-sky-50 flex items-center gap-2 font-bold text-slate-900">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#0095D9] shrink-0"></span> Tránsito
+                  </button>
+                  <button type="button" onclick="selectActiveSource('maquinaria')" id="sideSource-maquinaria" class="p-2 rounded-lg border border-slate-200 hover:border-slate-400 flex items-center gap-2 font-semibold text-slate-700">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#D91E36] shrink-0"></span> Maquinaria
+                  </button>
+                  <button type="button" onclick="selectActiveSource('personas')" id="sideSource-personas" class="p-2 rounded-lg border border-slate-200 hover:border-slate-400 flex items-center gap-2 font-semibold text-slate-700">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#F2D024] shrink-0"></span> Personas
+                  </button>
+                  <button type="button" onclick="selectActiveSource('naturaleza')" id="sideSource-naturaleza" class="p-2 rounded-lg border border-slate-200 hover:border-slate-400 flex items-center gap-2 font-semibold text-slate-700">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#5BB381] shrink-0"></span> Naturaleza
+                  </button>
+                </div>
+              </div>
+
+              <!-- Selección de Intensidad (Tamaño) -->
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  4. Intensidad de Volumen (Tamaño):
+                </label>
+                <div class="grid grid-cols-3 gap-1.5">
+                  <button type="button" onclick="selectActiveIntensity('alta')" id="sideInt-alta" class="py-2 rounded-lg border-2 border-slate-900 bg-[#1D2A62] text-white font-bold transition">
+                    Alta (Grande)
+                  </button>
+                  <button type="button" onclick="selectActiveIntensity('media')" id="sideInt-media" class="py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition">
+                    Media
+                  </button>
+                  <button type="button" onclick="selectActiveIntensity('baja')" id="sideInt-baja" class="py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition">
+                    Baja (Chica)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Nivel de Agrado (Eje vertical 😊 a ☹️) -->
+              <div>
+                <div class="flex justify-between font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  <span>5. Percepción (☹️ Incómodo ↔ 😊 Cómodo):</span>
+                  <span id="valenceLabel" class="text-slate-900">75% 😊</span>
+                </div>
+                <input id="formValence" type="range" min="15" max="88" value="75" oninput="document.getElementById('valenceLabel').textContent = this.value + '% ' + (this.value >= 50 ? '😊' : '☹️')" class="w-full accent-slate-900 cursor-pointer" />
+              </div>
+
+              <!-- Descripción breve del sonido escuchado -->
+              <div>
+                <label class="block font-bold uppercase tracking-wider text-slate-500 text-[10px] mb-1">
+                  Sonido Identificado (Opcional):
+                </label>
+                <input id="formNote" type="text" placeholder="Ej: Gaviotas y motor de lancha..." class="w-full rounded-xl bg-slate-50 border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
+              </div>
+
+              <button type="button" onclick="addPieceFromPanel()" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold uppercase tracking-wider text-xs shadow-md transition flex items-center justify-center gap-2">
+                <i class="ph-bold ph-plus-circle text-base"></i>
+                <span>Ubicar Pieza en el Tablero</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PANEL 2: INSPECTOR DE LA PIEZA SELECCIONADA -->
+          <div id="pieceInspector" class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pieza Seleccionada</span>
+              <span id="inspPieceId" class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-bold text-[11px]">#P-01</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div id="inspPieceDot" class="w-11 h-11 rounded-full bg-[#5BB381] shrink-0 shadow-inner border border-black/10"></div>
+              <div>
+                <div id="inspPiecePlace" class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Muelle Prat • Reposo</div>
+                <h4 id="inspPieceTitle" class="text-sm font-bold text-slate-900 leading-snug">Oleaje, viento marino y gaviotas en el borde costero</h4>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 text-xs">
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Fuente Emisora:</span>
+                <span id="inspPieceSource" class="font-bold text-slate-900">Naturaleza</span>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Intensidad (Tamaño):</span>
+                <span id="inspPieceIntensity" class="font-bold text-slate-900">Alta (Ø Grande)</span>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Momento:</span>
+                <span id="inspPieceMoment" class="font-bold text-slate-900">Reposo</span>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Agrado en Permanencia:</span>
+                <span id="inspPieceValence" class="font-bold text-emerald-700">😊 Agradable (82%)</span>
+              </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between">
+              <button onclick="playSelectedPieceTone()" class="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center gap-1 underline">
+                <i class="ph-fill ph-speaker-high"></i> Escuchar frecuencia
+              </button>
+              <button onclick="deleteSelectedPiece()" class="text-xs font-bold text-rose-600 hover:text-rose-800 flex items-center gap-1">
+                <i class="ph-bold ph-trash"></i> Quitar pieza
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECCIÓN 2: MATRIZ DE LOS 3 LUGARES × 3 MOMENTOS EN BARRIO PUERTO
+         ===================================================================== -->
+    <section id="lugares-momentos" class="scroll-mt-20 space-y-8 pt-6 border-t border-slate-200">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 block mb-1">
+            Estructura Territorial del Levantamiento
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900">
+            Los 3 Lugares del Barrio Puerto × 3 Momentos de Medición
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base max-w-3xl mt-1">
+            En cada uno de los tres espacios públicos seleccionados medimos cómo se transforma la percepción sonora dependiendo de si el habitante se encuentra en <strong>Reposo</strong>, en <strong>Tránsito</strong> o en <strong>Interacción</strong>. Haz clic en cualquier tarjeta para filtrar el tablero de acrílico.
+          </p>
+        </div>
+      </div>
+
+      <!-- GRILLA DE LOS 3 LUGARES (MUELLE PRAT, PLAZA SOTOMAYOR, PLAZA ECHAURREN) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LUGAR 1: MUELLE PRAT -->
+        <article class="rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-900 transition p-6 flex flex-col justify-between shadow-sm">
+          <div class="space-y-4">
+            <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-4">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-[#5BB381]">Lugar 01 • Borde Abierto al Mar</span>
+                <h3 class="text-2xl font-bold uppercase text-slate-900 mt-0.5">Muelle Prat</h3>
+              </div>
+              <button onclick="setPlaceFilter('muelle_prat'); document.getElementById('artefacto-interactivo').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-900 hover:text-white text-xs font-bold uppercase transition">
+                Ver en Tablero →
+              </button>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Explanada marítima abierta hacia la bahía. El sonido no rebota en muros frontales, permitiendo una coexistencia directa entre la <strong>Naturaleza</strong> (viento, oleaje, gaviotas) y la <strong>Maquinaria Portuaria</strong> (lanchas, grúas y sirenas de buques).
+            </p>
+
+            <!-- Los 3 momentos dentro de Muelle Prat -->
+            <div class="space-y-2.5 pt-2">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>1. Momento de Reposo</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#5BB381]/20 text-emerald-900 text-[10px]">Predomina Naturaleza (Media/Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">Personas sentadas mirando el mar: destacan las gaviotas, el oleaje y la brisa costera con alta sensación de agrado (😊).</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>2. Momento de Tránsito</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#D91E36]/15 text-rose-900 text-[10px]">Predomina Maquinaria (Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">Al caminar por el muelle sobresalen los motores diésel de lanchas, sirenas de buques y grúas del puerto de carga.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>3. Momento de Interacción</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#F2D024]/30 text-amber-950 text-[10px]">Predomina Personas (Media/Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">Pregones de lancheros ofreciendo paseos por la bahía, ferias de artesanía costera y músicos junto al borde.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Confort promedio: <strong class="text-slate-900">74% 😊</strong></span>
+            <a href="https://www.google.com/maps/place//data=!4m2!3m1!19sChIJHyxzxCzhiZYRgnuE0BHV6-A" target="_blank" class="font-bold text-slate-800 hover:underline flex items-center gap-1">
+              <i class="ph-fill ph-map-pin"></i> Ubicación
+            </a>
+          </div>
+        </article>
+
+        <!-- LUGAR 2: PLAZA SOTOMAYOR -->
+        <article class="rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-900 transition p-6 flex flex-col justify-between shadow-sm">
+          <div class="space-y-4">
+            <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-4">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-[#0095D9]">Lugar 02 • Explanada de Bordes Duros</span>
+                <h3 class="text-2xl font-bold uppercase text-slate-900 mt-0.5">Plaza Sotomayor</h3>
+              </div>
+              <button onclick="setPlaceFilter('plaza_sotomayor'); document.getElementById('artefacto-interactivo').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-900 hover:text-white text-xs font-bold uppercase transition">
+                Ver en Tablero →
+              </button>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Gran vacío cívico rodeado por edificios institucionales y arterias viales (Av. Errázuriz y Serrano). Presenta un fuerte contraste entre su <strong>perímetro de Tránsito vehicular</strong> y su centro amortiguado.
+            </p>
+
+            <!-- Los 3 momentos dentro de Plaza Sotomayor -->
+            <div class="space-y-2.5 pt-2">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>1. Momento de Reposo</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#0095D9]/15 text-sky-900 text-[10px]">Tránsito Lejano + Naturaleza (Baja)</span>
+                </div>
+                <p class="text-xs text-slate-600">En el centro de la explanada el ruido vehicular se percibe como un rumor perimetral amortiguado junto al viento y palomas.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>2. Momento de Tránsito</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#0095D9]/25 text-sky-950 text-[10px]">Predomina Tránsito (Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">Cruces peatonales de Estación Puerto: semáforos sonoros, frenos de microbuses, trolebuses y flujo continuo (☹️/😊).</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>3. Momento de Interacción</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#F2D024]/30 text-amber-950 text-[10px]">Predomina Personas (Media)</span>
+                </div>
+                <p class="text-xs text-slate-600">Interior de la Feria de Artesanos y grupos de visitantes: micro-clima acústico cálido que filtra el tráfico exterior.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Confort promedio: <strong class="text-slate-900">62% 😊</strong></span>
+            <a href="https://www.google.com/maps/place//data=!4m2!3m1!19sChIJQ0oPy9vgiZYR6unTIsDuHFg" target="_blank" class="font-bold text-slate-800 hover:underline flex items-center gap-1">
+              <i class="ph-fill ph-map-pin"></i> Ubicación
+            </a>
+          </div>
+        </article>
+
+        <!-- LUGAR 3: PLAZA ECHAURREN -->
+        <article class="rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-900 transition p-6 flex flex-col justify-between shadow-sm">
+          <div class="space-y-4">
+            <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-4">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-[#D91E36]">Lugar 03 • Claro Rodeado de Muros</span>
+                <h3 class="text-2xl font-bold uppercase text-slate-900 mt-0.5">Plaza Echaurren</h3>
+              </div>
+              <button onclick="setPlaceFilter('plaza_echaurren'); document.getElementById('artefacto-interactivo').scrollIntoView({behavior:'smooth'});" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-900 hover:text-white text-xs font-bold uppercase transition">
+                Ver en Tablero →
+              </button>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Plaza histórica confinada por fachadas continuas. Los muros reflejan las ondas hacia el centro, concentrando la mayor superposición de <strong>Personas</strong> (comercio, pregones, música) y <strong>Tránsito</strong> sobre adoquines.
+            </p>
+
+            <!-- Los 3 momentos dentro de Plaza Echaurren -->
+            <div class="space-y-2.5 pt-2">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>1. Momento de Reposo</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#F2D024]/30 text-amber-950 text-[10px]">Personas + Árboles (Media/Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">En los escaños bajo los árboles coexisten conversaciones vecinales densas, radios portátiles y aves en el follaje.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>2. Momento de Tránsito</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#0095D9]/25 text-sky-950 text-[10px]">Tránsito Encajonado (Alta)</span>
+                </div>
+                <p class="text-xs text-slate-600">Reverberación intensa de microbuses, bocinas y rodadura por calle Serrano y Cochrane que rebota en las 4 esquinas (☹️).</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold uppercase text-slate-900 mb-1">
+                  <span>3. Momento de Interacción</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#F2D024]/40 text-amber-950 text-[10px]">Personas en Intensidad Alta</span>
+                </div>
+                <p class="text-xs text-slate-600">Máxima vitalidad comercial: pregones a viva voz, feria callejera y encuentros que exigen elevar el volumen al hablar.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Confort promedio: <strong class="text-slate-900">48% (Alta saturación)</strong></span>
+            <a href="https://www.google.com/maps/place//data=!4m2!3m1!19sChIJBbM5NC3hiZYRQhxLJZWBUtw" target="_blank" class="font-bold text-slate-800 hover:underline flex items-center gap-1">
+              <i class="ph-fill ph-map-pin"></i> Ubicación
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECCIÓN 3: DASHBOARD DE DATOS RECOPILADOS (SOBRE FONDO BLANCO)
+         ===================================================================== -->
+    <section id="estadisticas" class="scroll-mt-20 space-y-8 pt-6 border-t border-slate-200">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 block mb-1">
+            Síntesis Cuantitativa del Artefacto
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900">
+            Resultados de la Recopilación por Lugar, Momento y Fuente
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base max-w-3xl mt-1">
+            Estos gráficos reflejan en tiempo real las piezas ubicadas sobre el tablero de acrílico, mostrando qué fuentes emisoras y qué tamaños de intensidad predominan en cada lugar y momento.
+          </p>
+        </div>
+
+        <button onclick="exportCSV()" class="px-4 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 self-start md:self-auto transition">
+          <i class="ph-bold ph-download-simple"></i>
+          <span>Descargar Matriz CSV</span>
+        </button>
+      </div>
+
+      <!-- 3 BLOQUES DE GRÁFICOS PRINCIPALES -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- GRÁFICO A: Fuentes Emisoras por cada uno de los 3 Lugares (5 cols) -->
+        <div class="lg:col-span-5 p-6 rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">Gráfico 01 • Origen del Sonido</span>
+            <h3 class="text-lg font-bold uppercase text-slate-900 mt-0.5">Proporción de las 4 Fuentes por Lugar</h3>
+            <p class="text-xs text-slate-500 mt-0.5 mb-5">Distribución porcentual de colores elegidos en Muelle Prat, Plaza Sotomayor y Plaza Echaurren.</p>
+
+            <div id="chartSourcesByPlace" class="space-y-4"></div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-bold text-slate-700">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#0095D9]"></span> Tránsito</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#D91E36]"></span> Maquinaria</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#F2D024]"></span> Personas</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#5BB381]"></span> Naturaleza</span>
+          </div>
+        </div>
+
+        <!-- GRÁFICO B: Tamaños de Intensidad (Alta, Media, Baja) según los 3 Momentos (4 cols) -->
+        <div class="lg:col-span-4 p-6 rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">Gráfico 02 • Diámetro de Piezas</span>
+            <h3 class="text-lg font-bold uppercase text-slate-900 mt-0.5">Intensidad de Volumen por Momento</h3>
+            <p class="text-xs text-slate-500 mt-0.5 mb-5">Comparación de piezas Grandes (Alta), Medianas (Media) y Pequeñas (Baja) en Reposo, Tránsito e Interacción.</p>
+
+            <div id="chartIntensityByMoment" class="space-y-4"></div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#1D2A62]">
+            <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded-full bg-[#1D2A62] inline-block"></span> Alta (Ø Grande)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#1D2A62]/70 inline-block"></span> Media</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#1D2A62]/45 inline-block"></span> Baja</span>
+          </div>
+        </div>
+
+        <!-- GRÁFICO C: Matriz cruzada 3 Lugares × 3 Momentos (3 cols) -->
+        <div class="lg:col-span-3 p-6 rounded-2xl bg-white border-2 border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">Gráfico 03 • Síntesis 3×3</span>
+            <h3 class="text-lg font-bold uppercase text-slate-900 mt-0.5">Fuente Dominante en cada Cruce</h3>
+            <p class="text-xs text-slate-500 mt-0.5 mb-4">Color predominante registrado en cada celda de medición.</p>
+
+            <div id="matrix3x3Container" class="space-y-2.5"></div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-snug">
+            <strong class="text-slate-900 uppercase block mb-0.5">Lectura del Objeto:</strong>
+            La superposición de círculos amarillos y azules en <em>Interacción</em> y <em>Tránsito</em> evidencia cómo la voz humana compite con el flujo vehicular.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECCIÓN 4: METODOLOGÍA DEL OBJETO Y EQUIPO GRUPO 2 E[AD] PUCV
+         ===================================================================== -->
+    <section id="metodologia" class="scroll-mt-20 space-y-8 pt-6 border-t border-slate-200">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-7 space-y-4">
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 block">
+            Diseño del Instrumento de Medición
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-slate-900">
+            ¿Cómo Funciona Nuestro Artefacto de Percepción Sonora?
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+            Para levantar datos in situ sin recurrir a un cuestionario tradicional en papel, diseñamos un <strong>dispositivo táctil de acrílico transparente</strong>. El habitante o caminante del Barrio Puerto se detiene a escuchar su entorno y traduce su experiencia auditiva en una acción física: elegir una pieza circular de color y tamaño específico y posicionarla dentro de la matriz de <strong>Permanencia (Reposo, Tránsito, Interacción)</strong>.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1">Transparencia y Superposición</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Las micas translúcidas permiten que al coincidir dos o más respuestas en un mismo punto se genere una mezcla cromática visible, revelando zonas de coexistencia o saturación acústica.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1">Doble Eje de Lectura</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                El eje horizontal clasifica la actividad del sujeto (<strong>Reposo, Tránsito, Interacción</strong>) mientras que el eje vertical izquierdo gradúa la sensación subjetiva desde el agrado (😊) hasta la incomodidad (☹️).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ficha de Créditos Grupo 2 -->
+        <div class="lg:col-span-5 p-6 rounded-2xl bg-slate-900 text-white space-y-5 shadow-lg">
+          <div class="flex items-center justify-between border-b border-white/15 pb-4">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Escuela de Arquitectura y Diseño</span>
+              <h3 class="text-xl font-bold uppercase tracking-tight">Proyecto de Visualización — Grupo 2</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-bold uppercase">2026</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="text-slate-400 uppercase font-bold tracking-wider text-[10px]">Lugares Evaluados en Barrio Puerto:</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1 rounded-full bg-white/10 font-semibold">1. Muelle Prat</span>
+              <span class="px-3 py-1 rounded-full bg-white/10 font-semibold">2. Plaza Sotomayor</span>
+              <span class="px-3 py-1 rounded-full bg-white/10 font-semibold">3. Plaza Echaurren</span>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="text-slate-400 uppercase font-bold tracking-wider text-[10px]">Integrantes del Equipo:</div>
+            <div class="flex flex-wrap gap-1.5">
+              <a href="https://wiki.ead.pucv.cl/Matias_Cordova_Arce" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Matías Córdova Arce</a>
+              <a href="https://wiki.ead.pucv.cl/Mateo_Mackay" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Mateo Mackay</a>
+              <a href="https://wiki.ead.pucv.cl/Francisco_Daniou" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Francisco Daniou</a>
+              <a href="https://wiki.ead.pucv.cl/Sof%C3%ADa_Vera" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Sofía Vera</a>
+              <a href="https://wiki.ead.pucv.cl/Piera_Ivelic_Porzio" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Piera Ivelic Porzio</a>
+              <a href="https://wiki.ead.pucv.cl/Sof%C3%ADa_Rojas" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Sofía Rojas</a>
+              <a href="https://wiki.ead.pucv.cl/Catalina_Cabezas" target="_blank" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition">Catalina Cabezas</a>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-white/15 flex items-center justify-between text-xs">
+            <span class="text-slate-400">Taller de Diseño de Servicios • e[ad] PUCV</span>
+            <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualizaci%C3%B3n_-_Grupo_2" target="_blank" class="font-bold text-white underline">Ver Wiki →</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE GUÍA DEL OBJETO DE ACRÍLICO -->
+  <div id="photoRefModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 border-2 border-slate-900 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-lg font-bold uppercase text-slate-900">Protocolo de Uso del Artefacto en Terreno</h3>
+        <button onclick="closePhotoReferenceModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-800">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <p><strong>1. Escucha consciente:</strong> El participante se detiene en el punto de medición (<em>Muelle Prat</em>, <em>Plaza Sotomayor</em> o <em>Plaza Echaurren</em>) e identifica dos o más sonidos de su entorno.</p>
+        <p><strong>2. Selección de Color (Fuente Emisora):</strong> Toma las micas circulares según el código del cabezal: <strong class="text-[#0095D9]">Azul (Tránsito)</strong>, <strong class="text-[#D91E36]">Rojo (Maquinaria Portuaria)</strong>, <strong class="text-[#c7a608]">Amarillo (Personas)</strong> o <strong class="text-[#5BB381]">Verde (Naturaleza)</strong>.</p>
+        <p><strong>3. Selección de Tamaño (Intensidad de Volumen):</strong> Elige el diámetro de la pieza según la intensidad percibida: <strong>Alta</strong> (círculo grande), <strong>Media</strong> (círculo mediano) o <strong>Baja</strong> (círculo pequeño).</p>
+        <p><strong>4. Ubicación en el Tablero:</strong> Posiciona la pieza en la columna correspondiente a su momento (<strong>Reposo</strong>, <strong>Tránsito</strong> o <strong>Interacción</strong>) y a la altura vertical que represente su confort (arriba junto a 😊 o abajo junto a ☹️).</p>
+      </div>
+      <div class="pt-2 flex justify-end">
+        <button onclick="closePhotoReferenceModal()" class="px-5 py-2 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER MINIMALISTA BLANCO -->
+  <footer class="border-t border-slate-200 bg-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
+      <div>
+        <strong class="text-slate-900 uppercase">Percepción Sonora — Grupo 2</strong> • Taller de Diseño de Servicios 2026 • e[ad] PUCV
+      </div>
+      <div>
+        Medición en Barrio Puerto: Muelle Prat • Plaza Sotomayor • Plaza Echaurren
+      </div>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       LÓGICA JAVASCRIPT: INTERACCIÓN FIEL AL ARTEFACTO, DRAG & DROP Y GRÁFICOS
+       ===================================================================== -->
+  <script>
+    // 1. CONFIGURACIÓN DE COLORES, TAMAÑOS, LUGARES Y MOMENTOS REALES DEL ARTEFACTO
+    const SOURCES_CONFIG = {
+      transito: {
+        label: 'Tránsito',
+        hex: '#0095D9',
+        cssClass: 'mica-transito',
+        freq: 195
+      },
+      maquinaria: {
+        label: 'Maquinaria Portuaria',
+        hex: '#D91E36',
+        cssClass: 'mica-maquinaria',
+        freq: 115
+      },
+      personas: {
+        label: 'Personas',
+        hex: '#F2D024',
+        cssClass: 'mica-personas',
+        freq: 440
+      },
+      naturaleza: {
+        label: 'Naturaleza',
+        hex: '#5BB381',
+        cssClass: 'mica-naturaleza',
+        freq: 587
+      }
+    };
+
+    // Diámetros de las piezas circulares según la intensidad (Alta, Media, Baja)
+    const INTENSITY_CONFIG = {
+      alta:  { label: 'Alta (Ø Grande)',  short: 'Alta',  sizePx: 88, scaleMobile: 0.72 },
+      media: { label: 'Media (Ø Mediana)', short: 'Media', sizePx: 62, scaleMobile: 0.72 },
+      baja:  { label: 'Baja (Ø Pequeña)', short: 'Baja',  sizePx: 40, scaleMobile: 0.72 }
+    };
+
+    const PLACES_CONFIG = {
+      muelle_prat:     { id: 'muelle_prat',     name: 'Muelle Prat',     short: 'Muelle Prat' },
+      plaza_sotomayor: { id: 'plaza_sotomayor', name: 'Plaza Sotomayor', short: 'Plaza Sotomayor' },
+      plaza_echaurren: { id: 'plaza_echaurren', name: 'Plaza Echaurren', short: 'Plaza Echaurren' }
+    };
+
+    const MOMENTS_CONFIG = {
+      reposo:      { id: 'reposo',      label: 'Reposo',      minX: 8,  maxX: 32, centerX: 20 },
+      transito:    { id: 'transito',    label: 'Tránsito',    minX: 35, maxX: 65, centerX: 50 },
+      interaccion: { id: 'interaccion', label: 'Interacción', minX: 68, maxX: 92, centerX: 80 }
+    };
+
+    // 2. DATOS PRE-CARGADOS FIELES A LA DISPOSICIÓN DE LA FOTO Y A LOS 3 LUGARES DEL BARRIO PUERTO
+    // Nota: 'y' va de 15% (Arriba = 😊 Cómodo) a 85% (Abajo = ☹️ Incómodo)
+    const INITIAL_PIECES = [
+      // --- COLUMNA 1: REPOSO (x: 10% a 31%) ---
+      { id: 'P-01', place: 'muelle_prat',     moment: 'reposo', source: 'naturaleza', intensity: 'alta',  x: 16.5, y: 27.0, note: 'Bandadas de gaviotas y brisa marina constante en el borde del muelle' },
+      { id: 'P-02', place: 'muelle_prat',     moment: 'reposo', source: 'naturaleza', intensity: 'media', x: 27.5, y: 44.0, note: 'Sonido del oleaje golpeando suavemente los pilotes' },
+      { id: 'P-03', place: 'plaza_sotomayor', moment: 'reposo', source: 'transito',   intensity: 'media', x: 14.2, y: 55.5, note: 'Rumor de vehículos pasando por el perímetro de la explanada' },
+      { id: 'P-04', place: 'plaza_echaurren', moment: 'reposo', source: 'personas',   intensity: 'alta',  x: 20.5, y: 59.0, note: 'Conversaciones de vecinos descansando en los escaños de la plaza' },
+      { id: 'P-05', place: 'plaza_sotomayor', moment: 'reposo', source: 'personas',   intensity: 'media', x: 16.0, y: 74.0, note: 'Murmullo peatonal y espera cerca de Estación Puerto' },
+      { id: 'P-06', place: 'muelle_prat',     moment: 'reposo', source: 'naturaleza', intensity: 'media', x: 15.2, y: 79.0, note: 'Ráfagas fuertes de viento costero en la tarde' },
+      { id: 'P-07', place: 'muelle_prat',     moment: 'reposo', source: 'transito',   intensity: 'alta',  x: 19.0, y: 77.5, note: 'Paso de buses y camiones por Av. Errázuriz percibido desde las bancas' },
+      { id: 'P-08', place: 'muelle_prat',     moment: 'reposo', source: 'maquinaria', intensity: 'alta',  x: 24.5, y: 71.0, note: 'Motores de lanchas en ralentí y grúas del puerto de carga' },
+      { id: 'P-09', place: 'plaza_echaurren', moment: 'reposo', source: 'maquinaria', intensity: 'media', x: 23.0, y: 81.5, note: 'Extractores y descarga metálica en locales comerciales cercanos' },
+
+      // --- COLUMNA 2: TRÁNSITO (x: 36% a 64%) ---
+      { id: 'P-10', place: 'muelle_prat',     moment: 'transito', source: 'naturaleza', intensity: 'baja',  x: 47.2, y: 24.5, note: 'Aves marinas escuchadas al caminar hacia la explanada' },
+      { id: 'P-11', place: 'plaza_sotomayor', moment: 'transito', source: 'transito',   intensity: 'alta',  x: 50.5, y: 31.0, note: 'Flujo de trolebuses y semáforo sonoro en cruce de Sotomayor' },
+      { id: 'P-12', place: 'plaza_echaurren', moment: 'transito', source: 'personas',   intensity: 'alta',  x: 55.8, y: 55.5, note: 'Cruce constante de peatones y pregones en las veredas' },
+      { id: 'P-13', place: 'muelle_prat',     moment: 'transito', source: 'maquinaria', intensity: 'media', x: 51.2, y: 61.0, note: 'Sirena de buque portacontenedores y maniobras en la dársena' },
+      { id: 'P-14', place: 'plaza_echaurren', moment: 'transito', source: 'maquinaria', intensity: 'media', x: 45.0, y: 73.5, note: 'Vibración mecánica y frenos de aire reverberando entre muros' },
+      { id: 'P-15', place: 'plaza_sotomayor', moment: 'transito', source: 'transito',   intensity: 'alta',  x: 49.5, y: 79.0, note: 'Microbuses acelerando sobre adoquines hacia calle Serrano' },
+
+      // --- COLUMNA 3: INTERACCIÓN (x: 68% a 92%) ---
+      { id: 'P-16', place: 'muelle_prat',     moment: 'interaccion', source: 'naturaleza', intensity: 'media', x: 70.5, y: 24.0, note: 'Ambiente marino de fondo mientras se recorren los puestos del muelle' },
+      { id: 'P-17', place: 'muelle_prat',     moment: 'interaccion', source: 'maquinaria', intensity: 'baja',  x: 70.2, y: 33.0, note: 'Campana y motor de lancha turística llamando a embarcar' },
+      { id: 'P-18', place: 'plaza_sotomayor', moment: 'interaccion', source: 'personas',   intensity: 'media', x: 80.5, y: 31.5, note: 'Conversación tranquila con locatarios en la Feria de Artesanos' },
+      { id: 'P-19', place: 'plaza_echaurren', moment: 'interaccion', source: 'personas',   intensity: 'alta',  x: 75.5, y: 52.0, note: 'Vendedores, música popular y charlas grupales en Plaza Echaurren' },
+      { id: 'P-20', place: 'plaza_sotomayor', moment: 'interaccion', source: 'personas',   intensity: 'media', x: 82.5, y: 50.0, note: 'Guías turísticos e intercambio comercial en la plaza' },
+      { id: 'P-21', place: 'plaza_echaurren', moment: 'interaccion', source: 'transito',   intensity: 'alta',  x: 72.5, y: 66.5, note: 'Tráfico vehicular rodeando la plaza mientras la gente conversa' },
+      { id: 'P-22', place: 'plaza_sotomayor', moment: 'interaccion', source: 'transito',   intensity: 'baja',  x: 78.2, y: 75.5, note: 'Paso de vehículos amortiguado desde el interior de la feria' },
+      { id: 'P-23', place: 'plaza_echaurren', moment: 'interaccion', source: 'maquinaria', intensity: 'baja',  x: 84.5, y: 61.5, note: 'Descarga de mercadería y carros en esquina comercial' }
+    ];
+
+    // ESTADO GLOBAL DE LA APLICACIÓN
+    let pieces = JSON.parse(JSON.stringify(INITIAL_PIECES));
+    let currentPlaceFilter = 'ALL';
+    let activeSource = 'transito';
+    let activeIntensity = 'alta';
+    let activeMoment = 'transito';
+    let selectedPieceId = 'P-01';
+    let isIsometric = false;
+    let draggingPieceId = null;
+
+    // 3. RENDERIZAR LAS PIEZAS DE MICA SOBRE EL TABLERO DE ACRÍLICO
+    function renderBoardPieces() {
+      const placeKeys = ['muelle_prat', 'plaza_sotomayor', 'plaza_echaurren'];
+      placeKeys.forEach(pk => {
+        const layer = document.getElementById(`layer-${pk}`);
+        const badge = layer.querySelector('.layer-badge');
+        layer.innerHTML = '';
+        if (badge) layer.appendChild(badge);
+
+        // Visibilidad de la capa según el filtro de lugar
+        if (currentPlaceFilter === 'ALL' || currentPlaceFilter === pk) {
+          layer.style.opacity = '1';
+        } else {
+          layer.style.opacity = '0.08';
+        }
+      });
+
+      const isMobile = window.innerWidth < 640;
+      let visibleTotal = 0;
+
+      pieces.forEach(p => {
+        const isPlaceVisible = (currentPlaceFilter === 'ALL' || currentPlaceFilter === p.place);
+        if (isPlaceVisible) visibleTotal++;
+
+        const layer = document.getElementById(`layer-${p.place}`);
+        if (!layer) return;
+
+        const srcCfg = SOURCES_CONFIG[p.source];
+        const intCfg = INTENSITY_CONFIG[p.intensity];
+        const diameter = isMobile ? Math.round(intCfg.sizePx * intCfg.scaleMobile) : intCfg.sizePx;
+
+        const el = document.createElement('div');
+        const isSelected = (p.id === selectedPieceId);
+        el.className = `mica-piece pointer-events-auto ${srcCfg.cssClass} ${isSelected ? 'selected-mica' : ''}`;
+        el.style.width = `${diameter}px`;
+        el.style.height = `${diameter}px`;
+        el.style.left = `${p.x}%`;
+        el.style.top = `${p.y}%`;
+        el.style.zIndex = p.intensity === 'alta' ? 20 : (p.intensity === 'media' ? 30 : 40);
+
+        if (!isPlaceVisible) {
+          el.style.pointerEvents = 'none';
+        }
+
+        // Eventos para seleccionar o arrastrar la pieza sobre el tablero
+        el.onmousedown = (e) => startDragPiece(e, p.id);
+        el.ontouchstart = (e) => startDragPiece(e, p.id);
+        el.onclick = (e) => {
+          e.stopPropagation();
+          selectPiece(p.id, true);
+        };
+
+        layer.appendChild(el);
+      });
+
+      document.getElementById('visiblePiecesCount').textContent = `${visibleTotal} piezas visibles en el tablero`;
+      applyIsometricTransform();
+    }
+
+    // 4. SELECCIÓN DE FUENTE EMISORA (4 COLORES) E INTENSIDAD (3 TAMAÑOS)
+    function selectActiveSource(sourceKey) {
+      activeSource = sourceKey;
+
+      // Actualizar botones del cabezal del artefacto
+      Object.keys(SOURCES_CONFIG).forEach(k => {
+        const headerBtn = document.getElementById(`headerSource-${k}`);
+        const circle = headerBtn.querySelector('div');
+        const sideBtn = document.getElementById(`sideSource-${k}`);
+
+        if (k === sourceKey) {
+          headerBtn.classList.add('active-pill');
+          circle.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900');
+          sideBtn.className = 'p-2 rounded-lg border-2 border-slate-900 bg-slate-100 flex items-center gap-2 font-bold text-slate-900';
+        } else {
+          headerBtn.classList.remove('active-pill');
+          circle.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900');
+          sideBtn.className = 'p-2 rounded-lg border border-slate-200 hover:border-slate-400 flex items-center gap-2 font-semibold text-slate-700';
+        }
+      });
+
+      updatePreviewMica();
+    }
+
+    function selectActiveIntensity(intKey) {
+      activeIntensity = intKey;
+
+      ['alta', 'media', 'baja'].forEach(k => {
+        const headerBtn = document.getElementById(`headerInt-${k}`);
+        const circle = headerBtn.querySelector('div');
+        const sideBtn = document.getElementById(`sideInt-${k}`);
+
+        if (k === intKey) {
+          circle.classList.remove('opacity-80', 'opacity-70');
+          circle.classList.add('ring-2', 'ring-offset-2', 'ring-slate-900');
+          sideBtn.className = 'py-2 rounded-lg border-2 border-slate-900 bg-[#1D2A62] text-white font-bold transition';
+        } else {
+          circle.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-900');
+          circle.classList.add('opacity-75');
+          sideBtn.className = 'py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition';
+        }
+      });
+
+      updatePreviewMica();
+    }
+
+    function setFormMoment(momentKey) {
+      activeMoment = momentKey;
+      ['reposo', 'transito', 'interaccion'].forEach(m => {
+        const btn = document.getElementById(`momentBtn-${m}`);
+        if (m === momentKey) {
+          btn.className = 'py-2 rounded-lg border-2 border-slate-900 bg-slate-900 text-white font-bold transition';
+        } else {
+          btn.className = 'py-2 rounded-lg border border-slate-300 font-bold text-slate-700 hover:border-slate-900 transition';
+        }
+      });
+    }
+
+    function updatePreviewMica() {
+      const preview = document.getElementById('previewMicaCircle');
+      const src = SOURCES_CONFIG[activeSource];
+      const intCfg = INTENSITY_CONFIG[activeIntensity];
+      preview.style.backgroundColor = src.hex;
+      preview.textContent = intCfg.short;
+      preview.style.color = activeSource === 'personas' ? '#111827' : '#FFFFFF';
+    }
+
+    // 5. AGREGAR PIEZA HACIENDO CLIC DIRECTAMENTE EN EL TABLERO O DESDE EL PANEL
+    function handleBoardSurfaceClick(event) {
+      if (draggingPieceId) return;
+      const board = document.getElementById('acrylicBoard');
+      const rect = board.getBoundingClientRect();
+      const xPct = Math.max(8, Math.min(92, ((event.clientX - rect.left) / rect.width) * 100));
+      const yPct = Math.max(14, Math.min(86, ((event.clientY - rect.top) / rect.height) * 100));
+
+      // Detectar en cuál de las 3 columnas (Reposo, Tránsito, Interacción) hizo clic
+      let clickedMoment = 'interaccion';
+      if (xPct < 33.3) clickedMoment = 'reposo';
+      else if (xPct < 66.6) clickedMoment = 'transito';
+
+      setFormMoment(clickedMoment);
+
+      // Si hay un lugar filtrado, usar ese lugar; si está en 'ALL', usar el selector del formulario
+      const targetPlace = currentPlaceFilter !== 'ALL'
+        ? currentPlaceFilter
+        : document.getElementById('formPlace').value;
+
+      createNewPiece(targetPlace, clickedMoment, xPct, yPct);
+    }
+
+    function addPieceFromPanel() {
+      const targetPlace = document.getElementById('formPlace').value;
+      const mCfg = MOMENTS_CONFIG[activeMoment];
+      const valence = Number(document.getElementById('formValence').value);
+
+      // Convertir agrado (15..88) a coordenada Y (arriba es más agradable 😊, abajo es más incómodo ☹️)
+      const yPct = 100 - valence;
+      const xPct = mCfg.centerX + (Math.random() * 14 - 7);
+
+      if (currentPlaceFilter !== 'ALL' && currentPlaceFilter !== targetPlace) {
+        setPlaceFilter(targetPlace);
+      }
+
+      createNewPiece(targetPlace, activeMoment, xPct, yPct);
+    }
+
+    function createNewPiece(place, moment, xPct, yPct) {
+      const noteInput = document.getElementById('formNote');
+      const customNote = noteInput.value.trim();
+      const defaultNote = `Sonido de ${SOURCES_CONFIG[activeSource].label} con intensidad ${INTENSITY_CONFIG[activeIntensity].short} durante ${MOMENTS_CONFIG[moment].label} en ${PLACES_CONFIG[place].name}`;
+
+      const newId = `P-${String(pieces.length + 1).padStart(2, '0')}`;
+      const newPiece = {
+        id: newId,
+        place,
+        moment,
+        source: activeSource,
+        intensity: activeIntensity,
+        x: Number(xPct.toFixed(1)),
+        y: Number(yPct.toFixed(1)),
+        note: customNote || defaultNote
+      };
+
+      pieces.push(newPiece);
+      noteInput.value = '';
+      renderBoardPieces();
+      selectPiece(newId, true);
+      renderAllCharts();
+    }
+
+    // 6. ARRASTRAR Y SOLTAR (DRAG & DROP) PIEZAS SOBRE EL ACRÍLICO
+    function startDragPiece(e, pieceId) {
+      e.stopPropagation();
+      draggingPieceId = pieceId;
+      selectPiece(pieceId, false);
+
+      const board = document.getElementById('acrylicBoard');
+
+      function onMove(moveEvent) {
+        if (!draggingPieceId) return;
+        const clientX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+        const clientY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+        const rect = board.getBoundingClientRect();
+
+        const xPct = Math.max(7, Math.min(93, ((clientX - rect.left) / rect.width) * 100));
+        const yPct = Math.max(12, Math.min(86, ((clientY - rect.top) / rect.height) * 100));
+
+        const p = pieces.find(item => item.id === draggingPieceId);
+        if (p) {
+          p.x = Number(xPct.toFixed(1));
+          p.y = Number(yPct.toFixed(1));
+          if (xPct < 33.3) p.moment = 'reposo';
+          else if (xPct < 66.6) p.moment = 'transito';
+          else p.moment = 'interaccion';
+          renderBoardPieces();
+          updateInspectorCard(p);
+        }
+      }
+
+      function onEnd() {
+        draggingPieceId = null;
+        renderAllCharts();
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onEnd);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onEnd);
+      }
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onEnd);
+    }
+
+    // 7. INSPECTOR DE PIEZA SELECCIONADA Y BORRADO
+    function selectPiece(pieceId, playAudio = false) {
+      selectedPieceId = pieceId;
+      const p = pieces.find(item => item.id === pieceId);
+      if (!p) return;
+      updateInspectorCard(p);
+      renderBoardPieces();
+      if (playAudio) playSelectedPieceTone();
+    }
+
+    function updateInspectorCard(p) {
+      const src = SOURCES_CONFIG[p.source];
+      const intCfg = INTENSITY_CONFIG[p.intensity];
+      const placeCfg = PLACES_CONFIG[p.place];
+      const momentCfg = MOMENTS_CONFIG[p.moment];
+
+      // Calcular porcentaje de agrado según altura Y (arriba = más cómodo 😊)
+      const comfortPct = Math.max(5, Math.min(98, Math.round(100 - p.y)));
+      const isHappy = comfortPct >= 50;
+
+      document.getElementById('inspPieceId').textContent = `#${p.id}`;
+      document.getElementById('inspPieceDot').style.backgroundColor = src.hex;
+      document.getElementById('inspPiecePlace').textContent = `${placeCfg.name} • ${momentCfg.label}`;
+      document.getElementById('inspPieceTitle').textContent = p.note;
+      document.getElementById('inspPieceSource').textContent = src.label;
+      document.getElementById('inspPieceIntensity').textContent = intCfg.label;
+      document.getElementById('inspPieceMoment').textContent = momentCfg.label;
+
+      const valEl = document.getElementById('inspPieceValence');
+      valEl.textContent = `${isHappy ? '😊 Cómodo' : '☹️ Saturado'} (${comfortPct}%)`;
+      valEl.className = `font-bold ${isHappy ? 'text-emerald-700' : 'text-rose-600'}`;
+    }
+
+    function deleteSelectedPiece() {
+      if (pieces.length <= 1) return;
+      pieces = pieces.filter(p => p.id !== selectedPieceId);
+      selectedPieceId = pieces[pieces.length - 1].id;
+      renderBoardPieces();
+      selectPiece(selectedPieceId, false);
+      renderAllCharts();
+    }
+
+    function resetBoardToFieldData() {
+      pieces = JSON.parse(JSON.stringify(INITIAL_PIECES));
+      currentPlaceFilter = 'ALL';
+      selectedPieceId = 'P-01';
+      setPlaceFilter('ALL');
+      selectPiece('P-01', false);
+      renderAllCharts();
+    }
+
+    // 8. FILTRO POR LUGAR (CONSOLIDADO, MUELLE PRAT, PLAZA SOTOMAYOR, PLAZA ECHAURREN) Y VISTA 3D
+    function setPlaceFilter(placeKey) {
+      currentPlaceFilter = placeKey;
+      if (placeKey !== 'ALL') {
+        document.getElementById('formPlace').value = placeKey;
+      }
+
+      document.querySelectorAll('.place-btn').forEach(btn => {
+        if (btn.dataset.place === placeKey) {
+          btn.className = 'place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-900 text-white shadow-sm transition';
+        } else {
+          btn.className = 'place-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-slate-900 transition';
+        }
+      });
+
+      renderBoardPieces();
+      renderAllCharts();
+    }
+
+    function toggleIsometricView(enable3D) {
+      isIsometric = enable3D;
+      const board = document.getElementById('acrylicBoard');
+      const btn2D = document.getElementById('btnView2D');
+      const btn3D = document.getElementById('btnView3D');
+      const badges = document.querySelectorAll('.layer-badge');
+
+      if (enable3D) {
+        board.classList.add('isometric-view');
+        btn3D.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-900 text-white transition';
+        btn2D.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 transition';
+        badges.forEach(b => b.classList.remove('hidden'));
+      } else {
+        board.classList.remove('isometric-view');
+        btn2D.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-900 text-white transition';
+        btn3D.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 transition';
+        badges.forEach(b => b.classList.add('hidden'));
+      }
+      applyIsometricTransform();
+    }
+
+    function applyIsometricTransform() {
+      const order = ['muelle_prat', 'plaza_sotomayor', 'plaza_echaurren'];
+      order.forEach((pk, idx) => {
+        const layer = document.getElementById(`layer-${pk}`);
+        if (!layer) return;
+        if (isIsometric) {
+          layer.style.transform = `translateZ(${(idx + 1) * 34}px)`;
+        } else {
+          layer.style.transform = 'translateZ(0px)';
+        }
+      });
+    }
+
+    // 9. RENDERIZADO DE LOS 3 GRÁFICOS DEL DASHBOARD
+    function renderAllCharts() {
+      renderChartSourcesByPlace();
+      renderChartIntensityByMoment();
+      renderMatrix3x3();
+    }
+
+    function renderChartSourcesByPlace() {
+      const container = document.getElementById('chartSourcesByPlace');
+      container.innerHTML = '';
+
+      Object.keys(PLACES_CONFIG).forEach(placeKey => {
+        const placePieces = pieces.filter(p => p.place === placeKey);
+        const total = placePieces.length || 1;
+
+        const counts = {
+          transito: placePieces.filter(p => p.source === 'transito').length,
+          maquinaria: placePieces.filter(p => p.source === 'maquinaria').length,
+          personas: placePieces.filter(p => p.source === 'personas').length,
+          naturaleza: placePieces.filter(p => p.source === 'naturaleza').length
+        };
+
+        const pct = {
+          transito: Math.round((counts.transito / total) * 100),
+          maquinaria: Math.round((counts.maquinaria / total) * 100),
+          personas: Math.round((counts.personas / total) * 100),
+          naturaleza: Math.round((counts.naturaleza / total) * 100)
+        };
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1.5';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase text-slate-900">${PLACES_CONFIG[placeKey].name}</span>
+            <span class="text-slate-500 font-semibold">${placePieces.length} piezas</span>
+          </div>
+          <div class="w-full h-6 rounded-full bg-slate-100 overflow-hidden flex p-0.5 gap-0.5 border border-slate-200">
+            ${pct.transito > 0 ? `<div style="width:${pct.transito}%" class="h-full bg-[#0095D9] first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-white" title="Tránsito: ${pct.transito}%">${pct.transito >= 12 ? pct.transito + '%' : ''}</div>` : ''}
+            ${pct.maquinaria > 0 ? `<div style="width:${pct.maquinaria}%" class="h-full bg-[#D91E36] first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-white" title="Maquinaria: ${pct.maquinaria}%">${pct.maquinaria >= 12 ? pct.maquinaria + '%' : ''}</div>` : ''}
+            ${pct.personas > 0 ? `<div style="width:${pct.personas}%" class="h-full bg-[#F2D024] first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-slate-900" title="Personas: ${pct.personas}%">${pct.personas >= 12 ? pct.personas + '%' : ''}</div>` : ''}
+            ${pct.naturaleza > 0 ? `<div style="width:${pct.naturaleza}%" class="h-full bg-[#5BB381] first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-white" title="Naturaleza: ${pct.naturaleza}%">${pct.naturaleza >= 12 ? pct.naturaleza + '%' : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderChartIntensityByMoment() {
+      const container = document.getElementById('chartIntensityByMoment');
+      container.innerHTML = '';
+
+      const activePool = currentPlaceFilter === 'ALL'
+        ? pieces
+        : pieces.filter(p => p.place === currentPlaceFilter);
+
+      Object.keys(MOMENTS_CONFIG).forEach(mKey => {
+        const mPieces = activePool.filter(p => p.moment === mKey);
+        const total = mPieces.length || 1;
+        const alta = Math.round((mPieces.filter(p => p.intensity === 'alta').length / total) * 100);
+        const media = Math.round((mPieces.filter(p => p.intensity === 'media').length / total) * 100);
+        const baja = Math.round((mPieces.filter(p => p.intensity === 'baja').length / total) * 100);
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1.5';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase text-slate-900">${MOMENTS_CONFIG[mKey].label}</span>
+            <span class="text-slate-500 font-semibold">${mPieces.length} registros</span>
+          </div>
+          <div class="w-full h-6 rounded-full bg-slate-100 overflow-hidden flex p-0.5 gap-0.5 border border-slate-200">
+            ${alta > 0 ? `<div style="width:${alta}%" class="h-full bg-[#1D2A62] first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-white">Alta ${alta}%</div>` : ''}
+            ${media > 0 ? `<div style="width:${media}%" class="h-full bg-[#1D2A62]/70 first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-white">Media ${media}%</div>` : ''}
+            ${baja > 0 ? `<div style="width:${baja}%" class="h-full bg-[#1D2A62]/40 first:rounded-l-full last:rounded-r-full flex items-center justify-center text-[10px] font-bold text-slate-900">${baja >= 14 ? 'Baja ' + baja + '%' : ''}</div>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderMatrix3x3() {
+      const container = document.getElementById('matrix3x3Container');
+      container.innerHTML = '';
+
+      Object.keys(PLACES_CONFIG).forEach(placeKey => {
+        const block = document.createElement('div');
+        block.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5';
+
+        let cellsHtml = '';
+        Object.keys(MOMENTS_CONFIG).forEach(momentKey => {
+          const cellPieces = pieces.filter(p => p.place === placeKey && p.moment === momentKey);
+          // Encontrar fuente dominante
+          let domSource = 'transito';
+          let maxCount = -1;
+          Object.keys(SOURCES_CONFIG).forEach(sk => {
+            const c = cellPieces.filter(p => p.source === sk).length;
+            if (c > maxCount) {
+              maxCount = c;
+              domSource = sk;
+            }
+          });
+          const srcCfg = SOURCES_CONFIG[domSource];
+          cellsHtml += `
+            <div class="flex flex-col items-center p-1.5 rounded-lg bg-white border border-slate-200 text-center">
+              <span class="text-[9px] font-bold uppercase text-slate-400">${MOMENTS_CONFIG[momentKey].label}</span>
+              <span class="w-4 h-4 rounded-full my-1 shadow-sm" style="background:${srcCfg.hex}"></span>
+              <span class="text-[10px] font-bold text-slate-800 leading-none">${srcCfg.label.split(' ')[0]}</span>
+            </div>
+          `;
+        });
+
+        block.innerHTML = `
+          <div class="text-[11px] font-bold uppercase text-slate-900">${PLACES_CONFIG[placeKey].name}</div>
+          <div class="grid grid-cols-3 gap-1.5">${cellsHtml}</div>
+        `;
+        container.appendChild(block);
+      });
+    }
+
+    // 10. SÍNTESIS SONORA WEB AUDIO API AL TOCAR UNA PIEZA DE MICA
+    let audioCtx = null;
+    function playSelectedPieceTone() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const p = pieces.find(item => item.id === selectedPieceId);
+        if (!p) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const srcCfg = SOURCES_CONFIG[p.source];
+
+        osc.type = p.source === 'naturaleza' ? 'sine' : (p.source === 'personas' ? 'triangle' : 'sawtooth');
+        osc.frequency.setValueAtTime(srcCfg.freq, now);
+
+        const vol = p.intensity === 'alta' ? 0.09 : (p.intensity === 'media' ? 0.05 : 0.025);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.48);
+      } catch (e) {
+        // Silencioso si el navegador bloquea audio sin gesto previo
+      }
+    }
+
+    // 11. EXPORTACIÓN DE DATOS A CSV Y MODAL DE REFERENCIA
+    function exportCSV() {
+      const headers = ['ID', 'Lugar_Barrio_Puerto', 'Momento', 'Fuente_Emisora', 'Intensidad_Tamano', 'Coord_X', 'Coord_Y', 'Confort_Pct', 'Nota_Sonora'];
+      const rows = pieces.map(p => [
+        p.id,
+        `"${PLACES_CONFIG[p.place].name}"`,
+        `"${MOMENTS_CONFIG[p.moment].label}"`,
+        `"${SOURCES_CONFIG[p.source].label}"`,
+        `"${INTENSITY_CONFIG[p.intensity].short}"`,
+        p.x,
+        p.y,
+        Math.round(100 - p.y),
+        `"${p.note.replace(/"/g, '""')}"`
+      ]);
+
+      const csv = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(csv));
+      link.setAttribute('download', 'percepcion_sonora_barrio_puerto_grupo2.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function openPhotoReferenceModal() {
+      document.getElementById('photoRefModal').classList.remove('hidden');
+    }
+
+    function closePhotoReferenceModal() {
+      document.getElementById('photoRefModal').classList.add('hidden');
+    }
+
+    window.addEventListener('resize', () => {
+      renderBoardPieces();
+    });
+
+    window.onload = function () {
+      updatePreviewMica();
+      renderBoardPieces();
+      selectPiece('P-01', false);
+      renderAllCharts();
+    };
+  </script>
+</body>
+</html>
