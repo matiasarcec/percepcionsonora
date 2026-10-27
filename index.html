@@ -162,13 +162,20 @@
     }
 
     .acrylic-peg {
-      width: 18px;
-      height: 18px;
+      width: 13px;
+      height: 13px;
       border-radius: 9999px;
       background: radial-gradient(circle at 32% 32%, #ffffff 0%, #e2e8f0 68%, #94a3b8 100%);
       border: 1.5px solid #cbd5e1;
       box-shadow: 2px 3px 6px rgba(15, 23, 42, 0.22);
       transition: opacity 0.4s ease;
+    }
+
+    @media (min-width: 640px) {
+      .acrylic-peg {
+        width: 18px;
+        height: 18px;
+      }
     }
 
     /* Círculos de mica translúcida sobre el tablero */
@@ -206,19 +213,33 @@
       border: 1.5px solid rgba(64, 145, 99, 0.55);
     }
 
-    /* Escenario con perspectiva 3D para rotar libremente en múltiples ángulos */
+    /* Escenario con perspectiva 3D para rotar libremente en múltiples ángulos y ver la separación de capas */
     .stage-perspective {
       perspective: 2200px;
       transform-style: preserve-3d;
+      transition: padding 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .stage-perspective.stage-3d-expanded {
+      padding-top: 3.5rem;
+      padding-bottom: 2.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .stage-perspective.stage-3d-expanded {
+        padding-top: 5.5rem;
+        padding-bottom: 3.75rem;
+      }
     }
 
     .acrylic-main-board.mode-3d-active {
       overflow: visible !important;
       cursor: grab;
-      background: linear-gradient(135deg, rgba(248, 250, 252, 0.35) 0%, rgba(226, 232, 240, 0.24) 100%);
+      background: linear-gradient(135deg, rgba(241, 245, 249, 0.88) 0%, rgba(226, 232, 240, 0.80) 100%);
+      border: 2.5px solid rgba(255, 255, 255, 0.92);
       box-shadow:
-        -20px 36px 80px rgba(0, 0, 0, 0.85),
-        inset 0 0 20px rgba(255, 255, 255, 0.45);
+        0 35px 70px rgba(0, 0, 0, 0.85),
+        inset 0 0 24px rgba(255, 255, 255, 0.85);
     }
     .acrylic-main-board.mode-3d-active:active {
       cursor: grabbing;
@@ -227,16 +248,57 @@
     .time-layer {
       position: absolute;
       inset: 0;
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, background 0.35s ease;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
       transform-style: preserve-3d;
       pointer-events: none;
     }
 
+    /* Placas de acrílico independientes flotando una sobre otra en 3D */
     .acrylic-main-board.mode-3d-active .time-layer {
-      border: 1.5px solid rgba(255, 255, 255, 0.75);
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(241, 245, 249, 0.38) 100%);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.42) 0%,
+        rgba(241, 245, 249, 0.22) 48%,
+        rgba(255, 255, 255, 0.38) 100%
+      );
       border-radius: 16px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+      box-shadow:
+        0 20px 38px rgba(15, 23, 42, 0.26),
+        0 2px 0 rgba(255, 255, 255, 0.95),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.85);
+    }
+
+    .acrylic-main-board.mode-3d-active .mica-piece {
+      mix-blend-mode: normal;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+    }
+
+    /* Guías internas sutiles de cada lámina de acrílico cuando está en 3D */
+    .layer-3d-chrome {
+      display: none;
+    }
+
+    .acrylic-main-board.mode-3d-active .layer-3d-chrome {
+      display: block;
+    }
+
+    /* Pernos/Espárragos verticales que atraviesan las 3 capas de acrílico en 3D */
+    .corner-standoff-rod {
+      display: none;
+      position: absolute;
+      width: 6px;
+      background: linear-gradient(90deg, rgba(148, 163, 184, 0.85), rgba(255, 255, 255, 0.98), rgba(148, 163, 184, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 9999px;
+      transform-origin: top center;
+      pointer-events: none;
+      z-index: 45;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+    }
+
+    .acrylic-main-board.mode-3d-active .corner-standoff-rod {
+      display: block;
     }
 
     /* MODO PROYECCIÓN TOTAL (SOLO CÍRCULOS SOBRE EL ESPACIO OSCURO) */
@@ -626,38 +688,37 @@
 
       <!-- BARRA INTERACTIVA DE ÁNGULOS 3D (VISIBLE CUANDO ESTÁ ACTIVO "CAPAS 3D") -->
       <div id="controls3DBar" class="hidden p-4 rounded-2xl bg-white/[0.04] border border-white/10 flex-wrap items-center justify-between gap-4 text-xs">
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mr-1">
-            <i class="ph-bold ph-cube text-white mr-1"></i>Ángulos 3D:
+            <i class="ph-bold ph-stack text-white mr-1"></i>Vistas de Capas:
           </span>
-          <button onclick="set3DAnglePreset(50, -24, 46)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
+          <button onclick="set3DAnglePreset(56, -26, 75)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
             Isométrica
           </button>
-          <button onclick="set3DAnglePreset(74, 0, 62)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
-            Perfil de Capas
+          <button onclick="set3DAnglePreset(74, -8, 95)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
+            Perfil Lateral de Capas
           </button>
-          <button onclick="set3DAnglePreset(46, 28, 46)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
+          <button onclick="set3DAnglePreset(54, 28, 75)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
             Oblicua Derecha
           </button>
-          <button onclick="set3DAnglePreset(18, 0, 28)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
-            Cenital
+          <button onclick="set3DAnglePreset(22, 0, 45)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white hover:text-black text-zinc-200 font-bold transition">
+            Cenital Superpuesta
           </button>
         </div>
 
-        <div class="flex flex-wrap items-center gap-5 text-zinc-300">
+        <div class="flex flex-wrap items-center gap-4 sm:gap-5 text-zinc-300">
           <label class="flex items-center gap-2">
-            <span class="text-[11px] text-zinc-400">Inclinación X: <strong id="valRotX" class="text-white">50°</strong></span>
-            <input id="rangeRotX" type="range" min="0" max="80" value="50" oninput="update3DFromRanges()" class="w-24 accent-white" />
+            <span class="text-[11px] text-zinc-400">Inclinación: <strong id="valRotX" class="text-white">56°</strong></span>
+            <input id="rangeRotX" type="range" min="10" max="80" value="56" oninput="update3DFromRanges()" class="w-20 sm:w-24 accent-white" />
           </label>
           <label class="flex items-center gap-2">
-            <span class="text-[11px] text-zinc-400">Giro Z: <strong id="valRotZ" class="text-white">-24°</strong></span>
-            <input id="rangeRotZ" type="range" min="-180" max="180" value="-24" oninput="update3DFromRanges()" class="w-24 accent-white" />
+            <span class="text-[11px] text-zinc-400">Giro: <strong id="valRotZ" class="text-white">-26°</strong></span>
+            <input id="rangeRotZ" type="range" min="-180" max="180" value="-26" oninput="update3DFromRanges()" class="w-20 sm:w-24 accent-white" />
           </label>
           <label class="flex items-center gap-2">
-            <span class="text-[11px] text-zinc-400">Separación Capas: <strong id="valGapZ" class="text-white">46px</strong></span>
-            <input id="rangeGapZ" type="range" min="16" max="85" value="46" oninput="update3DFromRanges()" class="w-24 accent-white" />
+            <span class="text-[11px] text-zinc-400">Separación Acrílicos: <strong id="valGapZ" class="text-emerald-400">75px</strong></span>
+            <input id="rangeGapZ" type="range" min="30" max="130" value="75" oninput="update3DFromRanges()" class="w-24 sm:w-28 accent-white" />
           </label>
-          <span class="text-[11px] text-zinc-400 hidden sm:inline">• Arrastra el objeto con el mouse para rotarlo libremente</span>
         </div>
       </div>
 
@@ -677,25 +738,19 @@
 
       <!-- =================================================================
            MAQUETA DEL OBJETO FÍSICO DE ACRÍLICO + INSPECTOR LATERAL
-           ================================================================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
-
-        <!-- COLUMNA IZQUIERDA (9 COLS): EL ARTEFACTO DE ACRÍLICO -->
-        <div class="lg:col-span-9 space-y-0">
-
-          <!-- CABEZAL SUPERIOR DEL OBJETO (Idéntico a la foto de referencia) -->
-          <div id="artifactHeaderPlate" class="acrylic-header-plate rounded-2xl p-6 sm:p-7 mx-auto relative z-20 text-slate-900">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- CABEZAL SUPERIOR DEL OBJETO (Idéntico a la foto de referencia, optimizado para móvil y escritorio) -->
+          <div id="artifactHeaderPlate" class="acrylic-header-plate rounded-2xl p-4 sm:p-7 mx-auto relative z-20 text-slate-900">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-center">
 
               <!-- Bloque Izquierdo: PERCEPCIÓN SONORA + Instrucciones -->
-              <div class="lg:col-span-4 space-y-1.5 border-b lg:border-b-0 lg:border-r border-slate-300/80 pb-4 lg:pb-0 lg:pr-5">
-                <h3 class="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 leading-none">
+              <div class="lg:col-span-4 space-y-1 border-b lg:border-b-0 lg:border-r border-slate-300/80 pb-3 lg:pb-0 lg:pr-5">
+                <h3 class="text-xl sm:text-3xl font-extrabold uppercase tracking-tight text-slate-900 leading-none">
                   PERCEPCIÓN<br/>SONORA
                 </h3>
-                <p class="text-[11px] font-semibold text-slate-800 pt-1">
+                <p class="text-[10px] sm:text-[11px] font-semibold text-slate-800 pt-1">
                   Detente un momento y escucha tu entorno:
                 </p>
-                <ul class="text-[11px] text-slate-600 space-y-0.5 font-normal leading-snug">
+                <ul class="text-[10px] sm:text-[11px] text-slate-600 space-y-0.5 font-normal leading-snug">
                   <li>• Identifica dos sonidos o más</li>
                   <li>• Elige el color según la fuente emisora del sonido</li>
                   <li>• Asigna el tamaño de la pieza según su intensidad</li>
@@ -704,66 +759,66 @@
               </div>
 
               <!-- Bloque Central: ¿Cuál es el origen o la fuente emisora del sonido? -->
-              <div class="lg:col-span-5 space-y-2.5 text-center">
-                <h4 class="text-xs sm:text-sm font-bold text-slate-900">
+              <div class="lg:col-span-5 space-y-2 text-center">
+                <h4 class="text-[11px] sm:text-sm font-bold text-slate-900">
                   ¿Cuál es el origen o la fuente emisora del sonido?
                 </h4>
-                <div class="grid grid-cols-4 gap-2 pt-1">
-                  <button type="button" onclick="selectActiveSource('transito')" id="headerSource-transito" class="group flex flex-col items-center gap-1.5 p-1 rounded-xl">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0095D9] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
-                      <i class="ph-fill ph-car text-2xl"></i>
+                <div class="grid grid-cols-4 gap-1.5 sm:gap-2 pt-0.5">
+                  <button type="button" onclick="selectActiveSource('transito')" id="headerSource-transito" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#0095D9] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                      <i class="ph-fill ph-car text-lg sm:text-2xl"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Tránsito</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">Tránsito</span>
                   </button>
 
-                  <button type="button" onclick="selectActiveSource('maquinaria')" id="headerSource-maquinaria" class="group flex flex-col items-center gap-1.5 p-1 rounded-xl">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#D91E36] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
-                      <i class="ph-bold ph-anchor text-2xl"></i>
+                  <button type="button" onclick="selectActiveSource('maquinaria')" id="headerSource-maquinaria" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#D91E36] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                      <i class="ph-bold ph-anchor text-lg sm:text-2xl"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Maquinaria<br/>Portuaria</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">Maquinaria<br/>Portuaria</span>
                   </button>
 
-                  <button type="button" onclick="selectActiveSource('personas')" id="headerSource-personas" class="group flex flex-col items-center gap-1.5 p-1 rounded-xl">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#F2D024] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
-                      <i class="ph-bold ph-user-sound text-2xl"></i>
+                  <button type="button" onclick="selectActiveSource('personas')" id="headerSource-personas" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#F2D024] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                      <i class="ph-bold ph-user-sound text-lg sm:text-2xl"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Personas</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">Personas</span>
                   </button>
 
-                  <button type="button" onclick="selectActiveSource('naturaleza')" id="headerSource-naturaleza" class="group flex flex-col items-center gap-1.5 p-1 rounded-xl">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#5BB381] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
-                      <i class="ph-fill ph-bird text-2xl"></i>
+                  <button type="button" onclick="selectActiveSource('naturaleza')" id="headerSource-naturaleza" class="group flex flex-col items-center gap-1 p-1 rounded-xl">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#5BB381] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                      <i class="ph-fill ph-bird text-lg sm:text-2xl"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800 leading-tight">Naturaleza</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-tight">Naturaleza</span>
                   </button>
                 </div>
               </div>
 
               <!-- Bloque Derecho: ¿Con qué intensidad se manifestó el sonido? -->
-              <div class="lg:col-span-3 space-y-2.5 text-center border-t lg:border-t-0 lg:border-l border-slate-300/80 pt-4 lg:pt-0 lg:pl-4">
-                <h4 class="text-xs sm:text-sm font-bold text-slate-900">
+              <div class="lg:col-span-3 space-y-2 text-center border-t lg:border-t-0 lg:border-l border-slate-300/80 pt-3 lg:pt-0 lg:pl-4">
+                <h4 class="text-[11px] sm:text-sm font-bold text-slate-900">
                   ¿Con qué intensidad se manifestó el sonido?
                 </h4>
-                <div class="flex items-end justify-center gap-4 pt-1">
-                  <button type="button" onclick="selectActiveIntensity('alta')" id="headerInt-alta" class="group flex flex-col items-center gap-1.5">
-                    <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
-                      <i class="ph-fill ph-speaker-high text-2xl"></i>
+                <div class="flex items-end justify-center gap-3.5 sm:gap-4 pt-0.5">
+                  <button type="button" onclick="selectActiveIntensity('alta')" id="headerInt-alta" class="group flex flex-col items-center gap-1">
+                    <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition ring-2 ring-offset-2 ring-slate-900">
+                      <i class="ph-fill ph-speaker-high text-lg sm:text-2xl"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800">Alta</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800">Alta</span>
                   </button>
 
-                  <button type="button" onclick="selectActiveIntensity('media')" id="headerInt-media" class="group flex flex-col items-center gap-1.5">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-80">
-                      <i class="ph-fill ph-speaker-low text-lg"></i>
+                  <button type="button" onclick="selectActiveIntensity('media')" id="headerInt-media" class="group flex flex-col items-center gap-1">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-80">
+                      <i class="ph-fill ph-speaker-low text-base sm:text-lg"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800">Media</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800">Media</span>
                   </button>
 
-                  <button type="button" onclick="selectActiveIntensity('baja')" id="headerInt-baja" class="group flex flex-col items-center gap-1.5">
-                    <div class="w-8 h-8 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-70">
-                      <i class="ph-fill ph-speaker-none text-sm"></i>
+                  <button type="button" onclick="selectActiveIntensity('baja')" id="headerInt-baja" class="group flex flex-col items-center gap-1">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1D2A62] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition opacity-70">
+                      <i class="ph-fill ph-speaker-none text-xs sm:text-sm"></i>
                     </div>
-                    <span class="text-[11px] font-bold text-slate-800">Baja</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-800">Baja</span>
                   </button>
                 </div>
               </div>
@@ -772,104 +827,110 @@
           </div>
 
           <!-- 3 Conectores de acrílico entre cabezal y tablero -->
-          <div id="artifactTopHinges" class="max-w-4xl mx-auto px-14 flex justify-between items-center -my-1 relative z-10 pointer-events-none transition-opacity duration-300">
-            <div class="acrylic-hinge rounded-sm"></div>
-            <div class="acrylic-hinge rounded-sm"></div>
-            <div class="acrylic-hinge rounded-sm"></div>
+          <div id="artifactTopHinges" class="max-w-4xl mx-auto px-8 sm:px-14 flex justify-between items-center -my-1 relative z-10 pointer-events-none transition-opacity duration-300">
+            <div class="acrylic-hinge rounded-sm w-10 sm:w-16"></div>
+            <div class="acrylic-hinge rounded-sm w-10 sm:w-16"></div>
+            <div class="acrylic-hinge rounded-sm w-10 sm:w-16"></div>
           </div>
 
           <!-- PLACA PRINCIPAL DE ACRÍLICO CON EJE Y (AGRADABILIDAD), EJE X (PERMANENCIA) Y GRABADO DE 3 COLUMNAS -->
           <div id="boardPerspectiveStage" class="stage-perspective py-2">
-            <div id="acrylicBoard" onclick="handleBoardSurfaceClick(event)" class="acrylic-main-board rounded-2xl w-full aspect-[16/9] min-h-[400px] sm:min-h-[490px] select-none overflow-hidden text-slate-900">
+            <div id="acrylicBoard" onclick="handleBoardSurfaceClick(event)" class="acrylic-main-board rounded-2xl w-full aspect-[4/3] sm:aspect-[16/9] min-h-[290px] sm:min-h-[480px] select-none overflow-hidden text-slate-900">
 
-              <!-- 4 Pernos cilíndricos blancos en las esquinas -->
-              <div class="acrylic-peg absolute top-4 left-4 z-40 pointer-events-none"></div>
-              <div class="acrylic-peg absolute top-4 right-4 z-40 pointer-events-none"></div>
-              <div class="acrylic-peg absolute bottom-4 left-4 z-40 pointer-events-none"></div>
-              <div class="acrylic-peg absolute bottom-4 right-4 z-40 pointer-events-none"></div>
+              <!-- 4 Pernos cilíndricos blancos en las esquinas de la Placa Base -->
+              <div class="acrylic-peg absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 z-40 pointer-events-none"></div>
+              <div class="acrylic-peg absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 z-40 pointer-events-none"></div>
+
+              <!-- 4 Espárragos verticales 3D que conectan la base con las 3 capas de acrílico -->
+              <div id="rod-tl" class="corner-standoff-rod top-3.5 left-3.5 sm:top-5 sm:left-5"></div>
+              <div id="rod-tr" class="corner-standoff-rod top-3.5 right-3.5 sm:top-5 sm:right-5"></div>
+              <div id="rod-bl" class="corner-standoff-rod bottom-3.5 left-3.5 sm:bottom-5 sm:left-5"></div>
+              <div id="rod-br" class="corner-standoff-rod bottom-3.5 right-3.5 sm:bottom-5 sm:right-5"></div>
 
               <!-- EJE X SUPERIOR: PERMANENCIA (¿Invita a irse o a quedarse en el lugar?) -->
-              <div id="boardAxisX" class="absolute top-3.5 left-16 right-16 z-30 pointer-events-none flex flex-col items-center transition-opacity duration-300">
-                <div class="flex items-center gap-4 w-full max-w-md justify-between text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              <div id="boardAxisX" class="absolute top-2 sm:top-3.5 left-10 right-8 sm:left-16 sm:right-16 z-30 pointer-events-none flex flex-col items-center transition-opacity duration-300">
+                <div class="flex items-center gap-2 sm:gap-4 w-full max-w-md justify-between text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.16em] text-slate-500">
                   <span>← Invita a irse</span>
-                  <span id="axisXTitle" class="text-sm sm:text-base font-bold text-slate-900 tracking-normal capitalize">Permanencia</span>
+                  <span id="axisXTitle" class="text-xs sm:text-base font-bold text-slate-900 tracking-normal capitalize">Permanencia</span>
                   <span>Invita a quedarse →</span>
                 </div>
-                <div class="w-full max-w-md h-[1px] bg-gradient-to-r from-transparent via-slate-400/70 to-transparent mt-1"></div>
+                <div class="w-full max-w-md h-[1px] bg-gradient-to-r from-transparent via-slate-400/70 to-transparent mt-0.5 sm:mt-1"></div>
               </div>
 
               <!-- EJE Y IZQUIERDO: AGRADABILIDAD (😊 Me agrada ↔ ☹️ Me genera molestia) -->
-              <div id="boardAxisY" class="absolute left-5 sm:left-7 top-12 bottom-12 w-10 z-30 flex flex-col items-center justify-between pointer-events-none transition-opacity duration-300">
+              <div id="boardAxisY" class="absolute left-2 sm:left-6 top-9 bottom-9 sm:top-12 sm:bottom-12 w-7 sm:w-10 z-30 flex flex-col items-center justify-between pointer-events-none transition-opacity duration-300">
                 <!-- Cara Feliz (Me agrada) -->
-                <div class="flex flex-col items-center gap-1">
-                  <div class="w-8 h-8 rounded-full bg-slate-900 text-white border border-white/20 flex items-center justify-center shadow-sm">
-                    <i class="ph-fill ph-smiley text-xl"></i>
+                <div class="flex flex-col items-center gap-0.5 sm:gap-1">
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-900 text-white border border-white/20 flex items-center justify-center shadow-sm">
+                    <i class="ph-fill ph-smiley text-sm sm:text-xl"></i>
                   </div>
-                  <span class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Agrada</span>
+                  <span class="text-[7px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-500">Agrada</span>
                 </div>
 
                 <!-- Etiqueta vertical girada: AGRADABILIDAD -->
                 <div class="flex-1 flex items-center justify-center relative my-1">
                   <div class="w-[1px] h-full bg-gradient-to-b from-slate-400 via-slate-300 to-slate-400"></div>
-                  <span id="axisYBadge" class="-rotate-90 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500 bg-slate-100/90 px-2 rounded">
+                  <span id="axisYBadge" class="-rotate-90 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-500 bg-slate-100/90 px-1.5 sm:px-2 rounded">
                     Agradabilidad
                   </span>
                 </div>
 
                 <!-- Cara Triste (Me genera molestia) -->
-                <div class="flex flex-col items-center gap-1">
-                  <span class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Molestia</span>
-                  <div class="w-8 h-8 rounded-full bg-slate-900 text-white border border-white/20 flex items-center justify-center shadow-sm">
-                    <i class="ph-fill ph-smiley-sad text-xl"></i>
+                <div class="flex flex-col items-center gap-0.5 sm:gap-1">
+                  <span class="text-[7px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-500">Molestia</span>
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-900 text-white border border-white/20 flex items-center justify-center shadow-sm">
+                    <i class="ph-fill ph-smiley-sad text-sm sm:text-xl"></i>
                   </div>
                 </div>
               </div>
 
-              <!-- GRABADO LÁSER EN EL ACRÍLICO: 3 COLUMNAS INFERIORES (REPOSO | TRÁNSITO | INTERACCIÓN) -->
-              <div id="boardColumnsGrid" class="absolute inset-0 grid grid-cols-3 pointer-events-none z-10 transition-opacity duration-300">
+              <!-- GRABADO LÁSER EN EL ACRÍLICO BASE: 3 COLUMNAS INFERIORES (REPOSO | TRÁNSITO | INTERACCIÓN) -->
+              <div id="boardColumnsGrid" class="absolute inset-0 grid grid-cols-3 pointer-events-none z-10 transition-opacity duration-300 pl-6 sm:pl-0">
                 <!-- Columna 1: Reposo -->
-                <div class="relative flex flex-col justify-end items-center pb-4 sm:pb-5">
+                <div class="relative flex flex-col justify-end items-center pb-2.5 sm:pb-5">
                   <div class="text-center">
-                    <span class="block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
-                    <span class="laser-engraved-text text-sm sm:text-base font-bold">Reposo</span>
+                    <span class="hidden sm:block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-[11px] sm:text-base font-bold">Reposo</span>
                   </div>
-                  <div class="laser-engraved-line absolute right-0 top-14 bottom-6"></div>
+                  <div class="laser-engraved-line absolute right-0 top-10 sm:top-14 bottom-4 sm:bottom-6"></div>
                 </div>
 
                 <!-- Columna 2: Tránsito -->
-                <div class="relative flex flex-col justify-end items-center pb-4 sm:pb-5">
+                <div class="relative flex flex-col justify-end items-center pb-2.5 sm:pb-5">
                   <div class="text-center">
-                    <span class="block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
-                    <span class="laser-engraved-text text-sm sm:text-base font-bold">Tránsito</span>
+                    <span class="hidden sm:block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-[11px] sm:text-base font-bold">Tránsito</span>
                   </div>
-                  <div class="laser-engraved-line absolute right-0 top-14 bottom-6"></div>
+                  <div class="laser-engraved-line absolute right-0 top-10 sm:top-14 bottom-4 sm:bottom-6"></div>
                 </div>
 
                 <!-- Columna 3: Interacción -->
-                <div class="relative flex flex-col justify-end items-center pb-4 sm:pb-5">
+                <div class="relative flex flex-col justify-end items-center pb-2.5 sm:pb-5">
                   <div class="text-center">
-                    <span class="block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
-                    <span class="laser-engraved-text text-sm sm:text-base font-bold">Interacción</span>
+                    <span class="hidden sm:block text-[9px] uppercase tracking-[0.2em] text-slate-500 font-semibold">En el lugar</span>
+                    <span class="laser-engraved-text text-[11px] sm:text-base font-bold">Interacción</span>
                   </div>
                 </div>
               </div>
 
               <!-- LAS 3 CAPAS HORARIAS DE ACRÍLICO (MAÑANA, MEDIODÍA, TARDE) -->
               <div id="layer-manana" class="time-layer z-20">
-                <span class="layer-badge hidden absolute top-3 right-12 bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                  Capa 1 • Mañana
+                <span class="layer-badge hidden absolute -top-3.5 left-4 sm:left-8 bg-slate-900 text-white border border-white/40 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                  Placa Acrílico 1 • Mañana (09:00–12:00)
                 </span>
               </div>
 
               <div id="layer-mediodia" class="time-layer z-20">
-                <span class="layer-badge hidden absolute top-3 right-12 bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                  Capa 2 • Mediodía
+                <span class="layer-badge hidden absolute -top-3.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white border border-white/40 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                  Placa Acrílico 2 • Mediodía (12:00–15:00)
                 </span>
               </div>
 
               <div id="layer-tarde" class="time-layer z-20">
-                <span class="layer-badge hidden absolute top-3 right-12 bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                  Capa 3 • Tarde
+                <span class="layer-badge hidden absolute -top-3.5 right-4 sm:right-8 bg-slate-900 text-white border border-white/40 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                  Placa Acrílico 3 • Tarde (15:00–18:30)
                 </span>
               </div>
 
@@ -877,10 +938,10 @@
           </div>
 
           <!-- Soportes inferiores de acrílico -->
-          <div id="artifactBottomHinges" class="max-w-4xl mx-auto px-14 flex justify-between items-center -mt-1 relative z-10 pointer-events-none transition-opacity duration-300">
-            <div class="acrylic-hinge rounded-sm h-3.5"></div>
-            <div class="acrylic-hinge rounded-sm h-3.5"></div>
-            <div class="acrylic-hinge rounded-sm h-3.5"></div>
+          <div id="artifactBottomHinges" class="max-w-4xl mx-auto px-8 sm:px-14 flex justify-between items-center -mt-1 relative z-10 pointer-events-none transition-opacity duration-300">
+            <div class="acrylic-hinge rounded-sm h-3.5 w-10 sm:w-16"></div>
+            <div class="acrylic-hinge rounded-sm h-3.5 w-10 sm:w-16"></div>
+            <div class="acrylic-hinge rounded-sm h-3.5 w-10 sm:w-16"></div>
           </div>
 
           <!-- Pie de lectura del tablero -->
@@ -1403,16 +1464,16 @@
     let isAuthorUnlocked = false;
     let draggingPieceId = null;
 
-    // Parámetros de rotación 3D libre en múltiples ángulos
+    // Parámetros de rotación 3D libre en múltiples ángulos con separación clara de acrílicos
     let rot3D = {
-      rotX: 50,
-      rotZ: -24,
-      gapZ: 46,
+      rotX: 56,
+      rotZ: -26,
+      gapZ: 75,
       isOrbiting: false,
       startX: 0,
       startY: 0,
-      baseRotX: 50,
-      baseRotZ: -24
+      baseRotX: 56,
+      baseRotZ: -26
     };
 
     function loadPiecesFromStorage() {
@@ -1527,6 +1588,7 @@
     }
 
     function applyBoardViewModeStyles() {
+      const stage = document.getElementById('boardPerspectiveStage');
       const board = document.getElementById('acrylicBoard');
       const headerPlate = document.getElementById('artifactHeaderPlate');
       const topHinges = document.getElementById('artifactTopHinges');
@@ -1540,6 +1602,7 @@
       const axisY = document.getElementById('boardAxisY');
       const colsGrid = document.getElementById('boardColumnsGrid');
 
+      stage.classList.remove('stage-3d-expanded');
       board.classList.remove('mode-3d-active', 'mode-projection-active');
       controls3D.classList.add('hidden');
       controls3D.classList.remove('flex');
@@ -1553,8 +1616,8 @@
       axisX.style.opacity = '1';
       axisY.style.opacity = '1';
       colsGrid.style.opacity = '1';
-      axisXTitle.className = 'text-sm sm:text-base font-bold text-slate-900 tracking-normal capitalize';
-      axisYBadge.className = '-rotate-90 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500 bg-slate-100/90 px-2 rounded';
+      axisXTitle.className = 'text-xs sm:text-base font-bold text-slate-900 tracking-normal capitalize';
+      axisYBadge.className = '-rotate-90 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-500 bg-slate-100/90 px-1.5 sm:px-2 rounded';
 
       if (boardViewMode === '2d') {
         board.style.transform = 'none';
@@ -1563,10 +1626,13 @@
           if (l) l.style.transform = 'translateZ(0px)';
         });
       } else if (boardViewMode === '3d') {
+        stage.classList.add('stage-3d-expanded');
         board.classList.add('mode-3d-active');
         controls3D.classList.remove('hidden');
         controls3D.classList.add('flex');
         badges.forEach(b => b.classList.remove('hidden'));
+        topHinges.classList.add('hidden');
+        bottomHinges.classList.add('hidden');
         apply3DTransformToBoardAndLayers();
       } else if (boardViewMode === 'projection') {
         board.classList.add('mode-projection-active');
@@ -1579,8 +1645,8 @@
         topHinges.classList.add('hidden');
         bottomHinges.classList.add('hidden');
 
-        axisXTitle.className = 'text-sm sm:text-base font-bold text-white tracking-normal capitalize';
-        axisYBadge.className = '-rotate-90 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.22em] text-zinc-300 bg-zinc-900/90 px-2 rounded border border-white/10';
+        axisXTitle.className = 'text-xs sm:text-base font-bold text-white tracking-normal capitalize';
+        axisYBadge.className = '-rotate-90 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-zinc-300 bg-zinc-900/90 px-1.5 sm:px-2 rounded border border-white/10';
 
         const showGuides = document.getElementById('chkProjectionGuides')?.checked ?? true;
         axisX.style.opacity = showGuides ? '1' : '0';
@@ -1594,7 +1660,7 @@
       }
     }
 
-    // 5. ROTACIÓN 3D EN MÚLTIPLES ÁNGULOS (PRESETS + SLIDERS + ARRASTRE CON EL MOUSE)
+    // 5. ROTACIÓN 3D EN MÚLTIPLES ÁNGULOS Y SEPARACIÓN DE PLACAS DE ACRÍLICO
     function set3DAnglePreset(rx, rz, gap) {
       rot3D.rotX = rx;
       rot3D.rotZ = rz;
@@ -1620,13 +1686,27 @@
       if (boardViewMode !== '3d') return;
 
       const board = document.getElementById('acrylicBoard');
-      board.style.transform = `rotateX(${rot3D.rotX}deg) rotateZ(${rot3D.rotZ}deg) scale(0.86)`;
+      const isMobile = window.innerWidth < 640;
+      const scale3D = isMobile ? 0.74 : 0.84;
+      const effectiveGap = isMobile ? Math.round(rot3D.gapZ * 0.65) : rot3D.gapZ;
+
+      board.style.transform = `rotateX(${rot3D.rotX}deg) rotateZ(${rot3D.rotZ}deg) scale(${scale3D})`;
 
       const order = ['manana', 'mediodia', 'tarde'];
       order.forEach((tk, idx) => {
         const layer = document.getElementById(`layer-${tk}`);
         if (!layer) return;
-        layer.style.transform = `translateZ(${(idx + 1) * rot3D.gapZ}px)`;
+        const zOffset = (idx + 1) * effectiveGap;
+        layer.style.transform = `translateZ(${zOffset}px)`;
+      });
+
+      // Ajustar los 4 espárragos/pernos verticales que atraviesan las 3 capas en las esquinas
+      const totalRodHeight = effectiveGap * 3;
+      ['rod-tl', 'rod-tr', 'rod-bl', 'rod-br'].forEach(rodId => {
+        const rod = document.getElementById(rodId);
+        if (!rod) return;
+        rod.style.height = `${totalRodHeight}px`;
+        rod.style.transform = `rotateX(-90deg)`;
       });
     }
 
@@ -1638,32 +1718,13 @@
         if (boardViewMode !== '3d') return;
         if (e.target.closest('.mica-piece')) return;
         rot3D.isOrbiting = true;
-        rot3D.startX = e.clientX;
-        rot3D.startY = e.clientY;
-        rot3D.baseRotX = rot3D.rotX;
-        rot3D.baseRotZ = rot3D.rotZ;
-        board.setPointerCapture(e.pointerId);
-      });
-
-      board.addEventListener('pointermove', (e) => {
-        if (!rot3D.isOrbiting || boardViewMode !== '3d') return;
-        const dx = e.clientX - rot3D.startX;
-        const dy = e.clientY - rot3D.startY;
-        rot3D.rotZ = Math.max(-180, Math.min(180, Math.round(rot3D.baseRotZ + dx * 0.45)));
-        rot3D.rotX = Math.max(0, Math.min(80, Math.round(rot3D.baseRotX - dy * 0.35)));
-        document.getElementById('rangeRotX').value = rot3D.rotX;
-        document.getElementById('rangeRotZ').value = rot3D.rotZ;
-        apply3DTransformToBoardAndLayers();
-      });
-
-      board.addEventListener('pointerup', (e) => {
-        rot3D.isOrbiting = false;
-        try { board.releasePointerCapture(e.pointerId); } catch (err) {}
-      });
-    }
-
-    // 6. RENDERIZAR EL TABLERO DE ACRÍLICO CON LAS 3 CAPAS HORARIAS
+    // 6. RENDERIZAR EL TABLERO DE ACRÍLICO CON LAS 3 CAPAS HORARIAS Y TAMAÑO RESPONSIVO EN CELULAR
     function renderBoardPieces() {
+      const board = document.getElementById('acrylicBoard');
+      const boardWidth = board ? board.clientWidth : 800;
+      // Escala proporcional exacta al ancho real del tablero para que en celular nunca se sature
+      const responsiveScale = Math.max(0.46, Math.min(1, boardWidth / 760));
+
       const timeKeys = ['manana', 'mediodia', 'tarde'];
       timeKeys.forEach(tk => {
         const layer = document.getElementById(`layer-${tk}`);
@@ -1672,14 +1733,33 @@
         layer.innerHTML = '';
         if (badge) layer.appendChild(badge);
 
+        // Agregar detalles físicos de la placa de acrílico para cuando se visualice en 3D
+        const chrome = document.createElement('div');
+        chrome.className = 'layer-3d-chrome absolute inset-0 pointer-events-none rounded-2xl overflow-hidden';
+        chrome.innerHTML = `
+          <!-- Brillo diagonal de la placa de acrílico -->
+          <div class="absolute inset-0 bg-[linear-gradient(125deg,rgba(255,255,255,0.38)_0%,transparent_38%,transparent_65%,rgba(255,255,255,0.22)_100%)]"></div>
+          <!-- Líneas grabadas de las 3 columnas en cada lámina -->
+          <div class="absolute inset-0 grid grid-cols-3">
+            <div class="border-r border-slate-400/35 h-full"></div>
+            <div class="border-r border-slate-400/35 h-full"></div>
+            <div></div>
+          </div>
+          <!-- Anillos de perforación en las 4 esquinas por donde pasan los pernos -->
+          <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white/90 bg-slate-200/70 absolute top-2.5 left-2.5 sm:top-4 sm:left-4"></div>
+          <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white/90 bg-slate-200/70 absolute top-2.5 right-2.5 sm:top-4 sm:right-4"></div>
+          <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white/90 bg-slate-200/70 absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4"></div>
+          <div class="w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white/90 bg-slate-200/70 absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4"></div>
+        `;
+        layer.appendChild(chrome);
+
         if (currentTimeFilter === 'ALL' || currentTimeFilter === tk) {
           layer.style.opacity = '1';
         } else {
-          layer.style.opacity = '0.07';
+          layer.style.opacity = '0.12';
         }
       });
 
-      const isMobile = window.innerWidth < 640;
       let visibleTotal = 0;
 
       pieces.forEach(p => {
@@ -1693,7 +1773,7 @@
 
         const srcCfg = SOURCES_CONFIG[p.source];
         const intCfg = INTENSITY_CONFIG[p.intensity];
-        const diameter = isMobile ? Math.round(intCfg.sizePx * intCfg.scaleMobile) : intCfg.sizePx;
+        const diameter = Math.round(intCfg.sizePx * responsiveScale);
 
         const el = document.createElement('div');
         const isSelected = (p.id === selectedPieceId);
